@@ -1,0 +1,15 @@
+{
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**.egg-info": true,
+        ".tox": true,
+        "build": true,
+        "dist": true,
+        ".pytest_cache": true,
+        "prenv/version.py": true
+    },
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": false,
+    "python.linting.enabled": true,
+    "python.formatting.provider": "black"
+}

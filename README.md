@@ -2,6 +2,9 @@
 
 **p**ortable **r**eproducible **env**ironments for Linux applications
 
+[![PyPi](https://img.shields.io/pypi/v/prenv.svg?style=flat-square)](https://pypi.python.org/pypi/prenv)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/ambv/black)
+
 ## What is prenv?
 
 prenv is a tool that allows regular users to deploy applications in a portable and reproducible way.

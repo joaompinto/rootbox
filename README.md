@@ -4,23 +4,16 @@
 
 ## What is prenv?
 
-prenv is a tool that allows to run Linux applications in unprivileged containerized environments. It aims to enable the use of several image types by regular Linux/WSL users.
+prenv is a tool that allows regular users to deploy applications in a portable and reproducible way.
 
-Currently supported image formats:
 
-    [X] Rootfs archives
-        [X] Tar
-            [X] Apine Linux
-            [ ] Arch Linux
-            [ ] Debian
-            [ ] Fedora
-            [ ] Gentoo
-            [ ] Ubuntu
+Unlike other container tecnhologies, prenv aims to provide integration with the running system - providing only the file level isolation required to execute an application.
 
-    [ ] Docker images
+This means that prenv can be used to run applications that require access to the host's network, devices, or other resources.
 
-prenv does not aim to be a full container runtime, but rather a tool enabling the distribution of applications in a portable and reproducible way.
+## Which applications can I run with prenv?
 
+Currently you can run any application that can be installed on Alpine Linux.
 
 ## System Requirements
 
@@ -31,9 +24,12 @@ prenv does not aim to be a full container runtime, but rather a tool enabling th
 ```sh
 pip install prenv
 ```
-## Examples
+## How to use
 Create an ephemeral in-memory Alpine instance
 
 ```sh
 prenv create alpine
+apk update
+apk add curl jq
+curl -s https://www.githubstatus.com/api/v2/status.json
 ```

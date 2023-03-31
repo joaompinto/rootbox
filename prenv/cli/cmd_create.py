@@ -20,6 +20,8 @@ def create(
 
     typer.echo(f"Downloading file {distro_url} for {distro_name}")
     tar_fname = download(distro_url)
+    print("Extracting rootfs... ", end="", flush=True)
     prepare_rootfs(tar_fname)
+    print("\nChrooting into rootfs")
     os.chroot(".")
     os.execv("/bin/sh", ["/bin/sh"])

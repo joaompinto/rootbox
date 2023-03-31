@@ -1,4 +1,5 @@
 import os
+from tempfile import mkdtemp
 
 from .mount import MS_BIND, MS_PRIVATE, MS_REC, mount
 from .tar import extract_tar
@@ -15,9 +16,15 @@ STD_MOUNTS = [
 def prepare_rootfs(rootfs_filename: str):
     set_user_level_root()
     mount(None, "/", None, MS_REC | MS_PRIVATE)
-    mount("tmpfs", "/mnt", "tmpfs")
-    os.chdir("/mnt")
+    mount_dir = mkdtemp()
+    mount("tmpfs", mount_dir, "tmpfs")
+    os.chdir(mount_dir)
     for mount_args in STD_MOUNTS:
         os.makedirs(mount_args[1])
         mount(*mount_args)
-    extract_tar(rootfs_filename, "/mnt")
+    extract_tar(rootfs_filename, mount_dir)
+    if os.path.exists(f"{mount_dir}/etc/resolv.conf"):
+        os.unlink(f"{mount_dir}/etc/resolv.conf")
+    with open(f"{mount_dir}/etc/resolv.conf", "w") as f:
+        f.write("")
+    mount("/etc/resolv.conf", f"{mount_dir}/etc/resolv.conf", None, MS_BIND),

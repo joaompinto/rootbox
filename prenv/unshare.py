@@ -19,12 +19,21 @@ libc.unshare.restype = ctypes.c_int
 
 
 def unshare(flags: int):
-    ret = libc.unshare(flags)
-    if ret == -1:
-        errno = ctypes.get_errno()
-        raise OSError(
-            errno, f"Fail to unshare with flags {flags:#x}: {os.strerror(errno)}"
-        )
+    retry = 2  # Use retry to avoid "Invalid argument" randomly found on WSL2
+    while True:
+        ret = libc.unshare(flags)
+        if ret == -1:
+            errno = ctypes.get_errno()
+            if errno == 22 and retry > 0:
+                print("Retry unshare")
+                retry -= 1
+                continue
+            else:
+                raise OSError(
+                    errno,
+                    f"Fail to unshare with flags {flags:#x}: {os.strerror(errno)}",
+                )
+        break
 
 
 def set_user_level_root():

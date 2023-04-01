@@ -17,8 +17,9 @@ The focus of prenv is to provide a tool that can be used to run applications in 
 
 Currently you can run applications available to install from the following distributions:
 
-    - Alpine Linux
-    - Void Linux
+    - [Alpine Linux](https://alpinelinux.org/)
+    - [Arch Linux](https://www.archlinux.org/)
+    - [Void Linux](https://voidlinux.org/)
 
 ## System Requirements
 
@@ -32,9 +33,31 @@ pip install prenv
 ## How to use
 Create an ephemeral in-memory Alpine instance
 
+
+### Using Void Linux
+```sh
+prenv create voidlinux
+xbps-install -Su
+xbps-install -u xbps
+xbps-install -S curl jq
+curl -s https://www.githubstatus.com/api/v2/status.json
+```
+
+
+### Using Alpine
 ```sh
 prenv create alpine
 apk update
 apk add curl jq
+curl -s https://www.githubstatus.com/api/v2/status.json
+```
+
+### Using Arch Linux
+```sh
+prenv create archlinux
+sed -i "s/#Server/Server/g" /etc/pacman.d/mirrorlist
+sed -i '/CheckSpace/d' /etc/pacman.conf
+pacman-key --init && pacman-key --populate archlinux
+pacman -Sy curl jq
 curl -s https://www.githubstatus.com/api/v2/status.json
 ```

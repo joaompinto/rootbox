@@ -17,9 +17,9 @@ The focus of prenv is to provide a tool that can be used to run applications in 
 
 Currently you can run applications available to install from the following distributions:
 
-    - [Alpine Linux](https://alpinelinux.org/)
-    - [Arch Linux](https://www.archlinux.org/)
-    - [Void Linux](https://voidlinux.org/)
+- [Alpine Linux](https://alpinelinux.org/)
+- [Arch Linux](https://www.archlinux.org/)
+- [Void Linux](https://voidlinux.org/)
 
 ## System Requirements
 

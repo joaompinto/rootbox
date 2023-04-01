@@ -1,11 +1,12 @@
 import typer
-from metadict import MetaDict
 
-state = MetaDict({"verbose": False})
+is_verbose = False
 
 
 def verbose(
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose mode")
 ):
     if verbose:
-        state["verbose"] = True
+        print("Running in verbose mode")
+        global is_verbose
+        is_verbose = True

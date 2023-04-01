@@ -1,5 +1,6 @@
 import ctypes
 import os
+import time
 from pathlib import Path
 
 CLONE_NEWNS = 0x20000
@@ -24,8 +25,9 @@ def unshare(flags: int):
         ret = libc.unshare(flags)
         if ret == -1:
             errno = ctypes.get_errno()
-            if errno == 22 and retry > 0:
-                print("Retry unshare")
+            if errno == 22 and retry >= 0:
+                print("Retrying unshare")
+                time.sleep(1)
                 retry -= 1
                 continue
             else:

@@ -53,7 +53,7 @@ class Cache(object):
 def download(image_url):
     """Download image (if not found in cache) and return it's filename"""
 
-    response = requests.head(image_url)
+    response = requests.head(image_url, allow_redirects=True)
     response.raise_for_status()
     file_size = remote_file_size = int(response.headers.get("Content-Length"))
     remote_last_modified = parsedate(response.headers.get("Last-Modified")).replace(

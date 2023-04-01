@@ -1,9 +1,10 @@
+"""  Create a new environment  """
 import os
 
 import typer
 
-from ..distros import URL_MAP
 from ..download import download
+from ..lxc import LCXMetaData
 from ..rootfs import prepare_rootfs
 
 
@@ -17,9 +18,13 @@ def create(
         False, "--until-tar", help="Pause with sh after extracting tar file"
     ),
 ):
-    distro_url = URL_MAP.get(distro_name)
-    if not distro_url:
+    lcx = LCXMetaData()
+    distro_version = None
+    if ":" in distro_name:
+        distro_name, distro_version = distro_name.split(":")
+    if distro_name not in lcx.distros():
         raise typer.BadParameter(f"Unknown distro {distro_name}")
+    distro_url = lcx.image_url(distro_name, distro_version=distro_version)
 
     typer.echo(f"Downloading file {distro_url} for {distro_name}")
     tar_fname = download(distro_url)

@@ -9,12 +9,16 @@
 
 prenv is a tool that allows regular users to deploy applications in a portable and reproducible way.
 
-Unlike other container tools like Docker or Podman, prenv does not require root privileges to be installed or used.
-The developer focus of prenv is to provide a tool that can be used to run applications in a reproducible way, without the need to install dependencies on the host system. It does not aim to provide the same level of isolation as other container tools.
+prenv does not require root privileges to be installed or used.
+The focus of prenv is to provide a tool that can be used to run applications in a reproducible way, without the need to install dependencies on the host system.
+ > prenv does **NOT** aim to provide full isolation between environemtns and the host, for such kind case please consider using Docker or Podman.
 
 ## Which applications can I run with prenv?
 
-Currently you can run any application that can be installed on Alpine Linux.
+Currently you can run applications available to install from the following distributions:
+
+    - Alpine Linux
+    - Void Linux
 
 ## System Requirements
 

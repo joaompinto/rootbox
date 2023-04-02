@@ -1,16 +1,14 @@
 """  Create a new environment  """
 import os
 import sys
+from typing import Optional
 
 import typer
 
 from ..download import download
 from ..lxc import LCXMetaData
 from ..process import create_child_process
-
-
-def check_distro_name(distro_name: str):
-    return distro_name
+from ..verbose import verbose
 
 
 def get_distro_url(distro_name: str):
@@ -25,14 +23,15 @@ def get_distro_url(distro_name: str):
 
 def create(
     distro_name: str = typer.Argument(...),
-    command: str = typer.Option("/bin/sh", "--command", "-c", help="Command to run"),
-    until_tar: bool = typer.Option(
-        False, "--until-tar", help="Pause with sh after extracting tar file"
-    ),
+    no_shell: bool = typer.Option(False, "--no-sh"),
+    command: Optional[str] = typer.Argument("/bin/sh", help="Command to be run"),
 ):
     distro_url = get_distro_url(distro_name)
-    typer.echo(f"Downloading file {distro_url} for {distro_name}")
+    verbose(f"Downloading file {distro_url} for {distro_name}")
     tar_fname = download(distro_url)
     pid = create_child_process(tar_fname)
-    args = [sys.executable, "-m", "prenv", "join", str(pid), "--command", command]
+    args = [sys.executable, "-m", "prenv", "join", str(pid), command]
+    # Respect the no-sh behavior
+    if no_shell:
+        args.insert(4, "--no-sh")
     os.execvp(sys.executable, args)

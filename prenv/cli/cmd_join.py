@@ -1,5 +1,7 @@
 """  Create a new environment  """
 
+from typing import Optional
+
 import typer
 
 from ..enter import enter_process
@@ -7,6 +9,7 @@ from ..enter import enter_process
 
 def join(
     pid: int,
-    command: str = typer.Option("/bin/sh", "--command", "-c", help="Command to run"),
+    no_shell: bool = typer.Option(False, "--no-sh"),
+    command: Optional[str] = typer.Argument("/bin/sh", help="Command to be run"),
 ):
-    enter_process(pid, command.split(" "))
+    enter_process(pid, no_shell, command)

@@ -37,7 +37,7 @@ def parent_process(pid: int) -> None:
     # Wait for the setup result
     message = conn.recv(1024).decode("utf-8")
     if message == "ok":
-        print("Instance setup successfully with PID:", info(pid))
+        verbose("Instance setup successfully with PID:", info(pid))
     else:
         print_error(f"Failed to setup the instance: {message}")
         exit(2)

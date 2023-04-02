@@ -7,10 +7,11 @@ from tempfile import NamedTemporaryFile
 
 import requests
 from dateutil.parser import parse as parsedate
-from tqdm import tqdm
+from rich.progress import Progress
 
 from .colorhelper import print_error, print_info, print_warn
 from .size import HumanSize
+from .verbose import verbose
 
 CACHE_PATH = join(expanduser("~"), ".prenv", "images_cache")
 
@@ -71,9 +72,9 @@ def download(image_url, use_cache=True):
         if remote_is_valid:
             cache_fn, last_modified, file_size = cached_image
             if remote_file_size == file_size and remote_last_modified < last_modified:
-                print_info("Using file from cache", CACHE_PATH)
+                verbose("Using file from cache", CACHE_PATH)
                 return cache_fn
-            print_info("Downloading new remote file because an update was found")
+            verbose("Checking new remote file because an update was found")
         else:
             print_warn("Unable to check the status for " + image_url)
             print_warn("Assuming local cache is valid")
@@ -93,13 +94,14 @@ def download(image_url, use_cache=True):
     )
     remote_sha256 = hashlib.sha256()
     response = requests.get(image_url, stream=True)
-    progress_bar = tqdm(total=remote_file_size, unit="iB", unit_scale=True)
-
+    response.raise_for_status()
     with NamedTemporaryFile(delete=False) as tmp_file:
-        for chunk in response.iter_content(chunk_size=1024):
-            progress_bar.update(len(chunk))
-            remote_sha256.update(chunk)
-            tmp_file.write(chunk)
+        with Progress() as progress:
+            task1 = progress.add_task("[green]Processing...", total=remote_file_size)
+            for chunk in response.iter_content(chunk_size=1024):
+                remote_sha256.update(chunk)
+                tmp_file.write(chunk)
+                progress.update(task1, advance=len(chunk))
             tmp_file.flush()
     if use_cache:
         return cache.put(tmp_file.name, image_url)

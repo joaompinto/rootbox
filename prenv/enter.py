@@ -9,7 +9,7 @@ SYSCALL_PIDFD_OPEN = 434
 libc = ctypes.CDLL(ctypes.util.find_library("c"), use_errno=True)
 
 
-def enter_process(pid: int, args) -> None:
+def enter_process(pid: int, no_shell, command) -> None:
     """Enter the process namespace of a given PID."""
 
     fd = libc.syscall(SYSCALL_PIDFD_OPEN, pid, 0, None, None, None)
@@ -30,5 +30,8 @@ def enter_process(pid: int, args) -> None:
     conn.close()
     os.chroot(data.decode("utf-8"))
     os.chdir("/")
-    commandline = args or ["/bin/sh"]
-    os.execvpe(commandline[0], commandline, os.environ)
+    if no_shell:
+        command = command.split()
+        os.execvp(command[0], command[:])
+    else:
+        os.execvp("/bin/sh", ["sh", "-c", command])

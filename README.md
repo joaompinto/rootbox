@@ -17,7 +17,7 @@ The focus of prenv is to provide a tool that can be used to run applications in 
 
 Currently you can run applications available to install from the following distributions:
 
-|Distro|Status|Commmand|Exec. time|Notes|
+|Distro|Status|Command|Exec. time|Notes|
 |:----:|:----:|--------|:---------:|:-------|
 |Alpine Linux|✓|prenv run alpine:3.17 "apk add jq"|3s|
 |Arch Linux|✓|prenv run archlinux "pacman -S --noconfirm jq"|16s|

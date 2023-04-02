@@ -17,9 +17,14 @@ The focus of prenv is to provide a tool that can be used to run applications in 
 
 Currently you can run applications available to install from the following distributions:
 
-- [Alpine Linux](https://alpinelinux.org/)
-- [Arch Linux](https://www.archlinux.org/)
-- [Void Linux](https://voidlinux.org/)
+|Short Name|                      | Status | Test command |Comments |
+|-|--------------------- |:------:|:------:|---|
+|Alpine|Alpine Linux|✓| pacman -S --noconfirm jq|
+|archlinux|Arch Linux| ✓ | |
+|Fedora|Fedora Linux| ✓ | |
+|Void|Void Linux| ✓ | |
+|✗|Debian Linux| ✗ | APT fails on privileged operations|
+|✗|Ubuntu Linux| ✗ | APT fails on privileged operations|
 
 ## System Requirements
 
@@ -31,33 +36,9 @@ Currently you can run applications available to install from the following distr
 pip install prenv
 ```
 ## How to use
-Create an ephemeral in-memory Alpine instance
 
-
-### Using Void Linux
+Creating an in-memory ephemeral container with the default shell for a Linux distribution:
 ```sh
-prenv create voidlinux
-xbps-install -Su
-xbps-install -u xbps
-xbps-install -S curl jq
-curl -s https://www.githubstatus.com/api/v2/status.json
-```
-
-
-### Using Alpine
-```sh
-prenv create alpine
-apk update
-apk add curl jq
-curl -s https://www.githubstatus.com/api/v2/status.json
-```
-
-### Using Arch Linux
-```sh
-prenv create archlinux
-sed -i "s/#Server/Server/g" /etc/pacman.d/mirrorlist
-sed -i '/CheckSpace/d' /etc/pacman.conf
-pacman-key --init && pacman-key --populate archlinux
-pacman -Sy curl jq
-curl -s https://www.githubstatus.com/api/v2/status.json
+# Check the list of supported distro names in the table above
+prenv create distroname
 ```

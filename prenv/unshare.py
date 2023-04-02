@@ -3,6 +3,8 @@ import os
 import time
 from pathlib import Path
 
+from .verbose import verbose
+
 CLONE_NEWNS = 0x20000
 CLONE_NEWCGROUP = 0x2000000
 CLONE_NEWUTS = 0x4000000
@@ -20,28 +22,25 @@ libc.unshare.restype = ctypes.c_int
 
 
 def unshare(flags: int):
-    retry = 2  # Use retry to avoid "Invalid argument" randomly found on WSL2
-    while True:
-        ret = libc.unshare(flags)
-        if ret == -1:
-            errno = ctypes.get_errno()
-            if errno == 22 and retry >= 0:
-                print("Retrying unshare")
-                time.sleep(1)
-                retry -= 1
-                continue
-            else:
-                raise OSError(
-                    errno,
-                    f"Fail to unshare with flags {flags:#x}: {os.strerror(errno)}",
-                )
-        break
+    ret = libc.unshare(flags)
+    if ret == -1:
+        errno = ctypes.get_errno()
+        raise OSError(
+            errno,
+            f"Fail to unshare with flags {flags:#x}: {os.strerror(errno)}",
+        )
+
+
+def rewrite_uid_map(uid, gid):
+    Path("/proc/self/uid_map").write_text(f"0 {uid} 1")
+    Path("/proc/self/setgroups").write_text("deny")
+    Path("/proc/self/gid_map").write_text(f"0 {gid} 1")
+    # wait for the uid/gid mapping to take effect
+    time.sleep(0.1)
 
 
 def set_user_level_root():
     uid, gid = os.geteuid(), os.getegid()
-    assert uid != 0 and gid != 0  # already have root privileges
+    verbose("Creating user and mount namespaces")
     unshare(CLONE_NEWNS | CLONE_NEWUSER)
-    Path("/proc/self/uid_map").write_text(f"0 {uid} 1")
-    Path("/proc/self/setgroups").write_text("deny")
-    Path("/proc/self/gid_map").write_text(f"0 {gid} 1")
+    rewrite_uid_map(uid, gid)

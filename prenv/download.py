@@ -50,7 +50,7 @@ class Cache(object):
         return cache_fn
 
 
-def download(image_url):
+def download(image_url, use_cache=True):
     """Download image (if not found in cache) and return it's filename"""
 
     response = requests.head(image_url, allow_redirects=True)
@@ -62,8 +62,11 @@ def download(image_url):
     remote_is_valid = response.status_code == 200 and file_size and remote_last_modified
 
     # Check if image is on cache
-    cache = Cache()
-    cached_image = cache.get(image_url)
+    if use_cache:
+        cache = Cache()
+        cached_image = cache.get(image_url)
+    else:
+        cached_image = None
     if cached_image:
         if remote_is_valid:
             cache_fn, last_modified, file_size = cached_image
@@ -91,11 +94,14 @@ def download(image_url):
     remote_sha256 = hashlib.sha256()
     response = requests.get(image_url, stream=True)
     progress_bar = tqdm(total=remote_file_size, unit="iB", unit_scale=True)
+
     with NamedTemporaryFile(delete=False) as tmp_file:
         for chunk in response.iter_content(chunk_size=1024):
             progress_bar.update(len(chunk))
             remote_sha256.update(chunk)
             tmp_file.write(chunk)
             tmp_file.flush()
-
-    return cache.put(tmp_file.name, image_url)
+    if use_cache:
+        return cache.put(tmp_file.name, image_url)
+    else:
+        return tmp_file.name

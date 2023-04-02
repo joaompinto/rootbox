@@ -19,10 +19,18 @@ Currently you can run applications available to install from the following distr
 
 |Distro|Status|Command|Exec. time|Notes|
 |:----:|:----:|--------|:---------:|:-------|
-|Alpine Linux|✓|prenv run alpine:3.17 "apk add jq"|3s|
-|Arch Linux|✓|prenv run archlinux "pacman -S --noconfirm jq"|16s|
-|Fedora Linux|✓|prenv run fedora:24 "dnf install -y jq"|38s
-|Void Linux|✓|prenv run voidlinux "xbps-install -Sy jq"|8s
+|Alpine Linux|✓|prenv run alpine:3.17 true|2|
+|openSUSE|✓|prenv run opensuse:tumbleweed true|5|
+|Void Linux|✓|prenv run voidlinux true|5
+|Amazon Linux|✓|prenv run amazonlinux true|6|
+|Springdale Linux|✓|prenv run springdalelinux:9 true|8|
+|AlmaLinuxOS|✓|prenv run almalinux:9 true|10|
+|CentoOS|✓|prenv run centos:9-Stream true|10|
+|Fedora Linux|✓|prenv run fedora:37 true|10
+|Rocky Linux|✓|prenv run rockylinux:9 true|10|
+|Arch Linux|✓|prenv run archlinux true|16|
+
+
 
 The Linux images are sourced from https://linuxcontainers.org/ and are based on the official images from the respective distributions.
 

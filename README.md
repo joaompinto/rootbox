@@ -17,14 +17,14 @@ The focus of prenv is to provide a tool that can be used to run applications in 
 
 Currently you can run applications available to install from the following distributions:
 
-|Short Name|                      | Status | Test command |Comments |
-|-|--------------------- |:------:|:------:|---|
-|Alpine|Alpine Linux|✓| pacman -S --noconfirm jq|
-|archlinux|Arch Linux| ✓ | |
-|Fedora|Fedora Linux| ✓ | |
-|Void|Void Linux| ✓ | |
-|✗|Debian Linux| ✗ | APT fails on privileged operations|
-|✗|Ubuntu Linux| ✗ | APT fails on privileged operations|
+|Distro|Status|Commmand|Exec. time|Notes|
+|:----:|:----:|--------|:---------:|:-------|
+|Alpine Linux|✓|prenv run alpine:3.17 "apk add jq"|3s|
+|Arch Linux|✓|prenv run archlinux "pacman -S --noconfirm jq"|16s|
+|Fedora Linux|✓|prenv run fedora:24 "dnf install -y jq"|38s
+|Void Linux|✓|prenv run voidlinux "xbps-install -Sy jq"|8s
+
+The Linux images are sourced from https://linuxcontainers.org/ and are based on the official images from the respective distributions.
 
 ## System Requirements
 
@@ -37,8 +37,27 @@ pip install prenv
 ```
 ## How to use
 
-Creating an in-memory ephemeral container with the default shell for a Linux distribution:
+List all the distributions available from the LXC project
 ```sh
 # Check the list of supported distro names in the table above
-prenv create distroname
+prenv lxc list
+```
+
+### Run an in-memory single run container
+Run a shell in an Alpine Linux container
+```sh
+prenv run alpine:3.17
+```
+Check the apk version:
+```sh
+prenv run alpine:3.17 "apk --version"
+```
+
+### Create an in-memory multi run container
+```sh
+prenv create alpine:3.17
+```
+### Execute a command in a container
+```sh
+prenv execute alpine:3.17 "apk --version"
 ```

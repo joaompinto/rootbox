@@ -24,14 +24,15 @@ def get_distro_url(distro_name: str):
 def create(
     distro_name: str = typer.Argument(...),
     no_shell: bool = typer.Option(False, "--no-sh"),
-    command: Optional[str] = typer.Argument("/bin/sh", help="Command to be run"),
+    command: Optional[str] = typer.Argument(None, help="Command to be run"),
 ):
     distro_url = get_distro_url(distro_name)
     verbose(f"Downloading file {distro_url} for {distro_name}")
     tar_fname = download(distro_url)
     pid = create_child_process(tar_fname)
-    args = [sys.executable, "-m", "prenv", "join", str(pid), command]
-    # Respect the no-sh behavior
-    if no_shell:
-        args.insert(4, "--no-sh")
-    os.execvp(sys.executable, args)
+    if command:
+        args = [sys.executable, "-m", "prenv", "join", str(pid), command]
+        # Respect the no-sh behavior
+        if no_shell:
+            args.insert(4, "--no-sh")
+        os.execvp(sys.executable, args)

@@ -1,13 +1,13 @@
 import typer
 
-from .cli import cmd_create, cmd_join, cmd_lxc, cmd_run, verbose
+from .cli import cmd_create, cmd_exec, cmd_lxc, cmd_run, verbose
 
 
 def main():
     app = typer.Typer(short_help="Utility to manage a pypy.org metadata cache")
 
     app.command(help="Create a container instance")(cmd_create.create)
-    app.command(help="Join command into an existing instance")(cmd_join.join)
+    app.command(help="Execute a command in an existing instance")(cmd_exec.exec)
     app.command(help="Run a command in an ephemeral instance")(cmd_run.run)
     app.add_typer(
         cmd_lxc.app, name="lxc", help="Get information about available LCX images"

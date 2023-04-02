@@ -7,7 +7,7 @@ import typer
 from ..enter import enter_process
 
 
-def join(
+def exec(
     pid: int,
     no_shell: bool = typer.Option(False, "--no-sh"),
     command: Optional[str] = typer.Argument("/bin/sh", help="Command to be run"),

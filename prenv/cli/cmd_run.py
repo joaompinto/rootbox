@@ -13,7 +13,7 @@ from .cmd_create import get_distro_url
 def run(
     distro_name: str = typer.Argument(...),
     no_shell: bool = typer.Option(False, "--no-sh"),
-    command: Optional[str] = typer.Argument(None, help="Command to be run"),
+    command: Optional[str] = typer.Argument("/bin/sh", help="Command to be run"),
 ):
     distro_url = get_distro_url(distro_name)
     verbose(f"Checking file {distro_url} for {distro_name}")

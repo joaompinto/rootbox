@@ -5,6 +5,7 @@ from typing import Optional
 
 import typer
 
+from ..docker import pull_docker_image
 from ..download import download
 from ..lxc import LCXMetaData
 from ..process import create_child_process
@@ -24,11 +25,17 @@ def get_distro_url(distro_name: str):
 def create(
     distro_name: str = typer.Argument(...),
     no_shell: bool = typer.Option(False, "--no-sh"),
+    from_docker: bool = typer.Option(
+        False, "--from-docker", help="Run from docker image"
+    ),
     command: Optional[str] = typer.Argument(None, help="Command to be run"),
 ):
-    distro_url = get_distro_url(distro_name)
-    verbose(f"Downloading file {distro_url} for {distro_name}")
-    tar_fname = download(distro_url)
+    if from_docker:
+        tar_fname = pull_docker_image(distro_name)
+    else:
+        distro_url = get_distro_url(distro_name)
+        verbose(f"Checking file {distro_url} for {distro_name}")
+        tar_fname = download(distro_url)
     pid = create_child_process(tar_fname)
     if command:
         args = [sys.executable, "-m", "prenv", "join", str(pid), command]

@@ -21,9 +21,6 @@ def prepare_rootfs(rootfs_filename: str, in_memory):
     if in_memory:
         mount("tmpfs", mount_dir, "tmpfs")
     extract_tar(rootfs_filename, mount_dir)
-    root_content = [_ for _ in mount_dir.glob("*")]
-    if len(root_content) == 1:
-        mount_dir = mount_dir.joinpath(root_content[0])
     os.chdir(mount_dir)
     for mount_args in STD_MOUNTS:
         os.makedirs(mount_args[1], exist_ok=True)
@@ -31,7 +28,7 @@ def prepare_rootfs(rootfs_filename: str, in_memory):
     resolv_conf = Path(f"{mount_dir}/etc/resolv.conf")
     if resolv_conf.is_symlink():
         resolv_conf.unlink()
-    resolv_conf.touch()
-    mount("/etc/resolv.conf", f"{mount_dir}/etc/resolv.conf", None, MS_BIND)
-    # os.chroot(f"{mount_dir}")
+    if Path(mount_dir, "etc").exists():
+        resolv_conf.touch()
+        mount("/etc/resolv.conf", f"{mount_dir}/etc/resolv.conf", None, MS_BIND)
     return mount_dir

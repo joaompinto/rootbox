@@ -20,6 +20,7 @@ def url_to_filename(url: str):
     """Convert url to filename"""
     url = url.replace("://", "_")
     url = url.replace("/", "_")
+    url = url.replace(":", "_")
     return url
 
 

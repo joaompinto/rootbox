@@ -4,7 +4,7 @@ from typing import Optional
 import typer
 
 from ..colorhelper import print_list
-from ..lxc import LCXMetaData
+from ..images.lxc import LCXMetaData
 
 app = typer.Typer()
 

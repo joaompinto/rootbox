@@ -12,5 +12,5 @@ The url to download the images is const5ructed from the index using the followin
 ```python
 # Python snippet
 LXC_URL_TEMPL = 'https://images.linuxcontainers.org/images/{}/{}/{}/{}/{}/rootfs.tar.xz'
-url = LXC_URL_TEMPL.format(distro_name, distro_version, distro_arch, distro_variant, distro_build)
+url = LXC_URL_TEMPL.format(image_name, distro_version, distro_arch, distro_variant, distro_build)
 ```

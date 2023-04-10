@@ -13,7 +13,7 @@ from .colorhelper import print_error, print_info, print_warn
 from .size import HumanSize
 from .verbose import verbose
 
-CACHE_PATH = join(expanduser("~"), ".prenv", "images_cache")
+CACHE_PATH = join(expanduser("~"), ".rootbox", "images_cache")
 
 
 def url_to_filename(url: str):

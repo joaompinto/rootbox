@@ -6,7 +6,7 @@ from setuptools import setup
 SCRIPT_DIR = Path(__file__).parent
 
 
-scm_version_options = {"write_to": "prenv/version.py"}
+scm_version_options = {"write_to": "rootbox/version.py"}
 
 
 def setup_package():

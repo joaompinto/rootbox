@@ -1,6 +1,6 @@
 
 # LXC
-prenv uses linux distribution containers (LXC) from the LXC project:lx
+rootbox uses linux distribution containers (LXC) from the LXC project:lx
 https://linuxcontainers.org/
 
 The index is obtained from: https://images.linuxcontainers.org/meta/1.0/index-user

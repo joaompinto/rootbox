@@ -7,7 +7,7 @@
         "build": true,
         "dist": true,
         ".pytest_cache": true,
-        "prenv/version.py": true
+        "rootbox/version.py": true
     },
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": false,

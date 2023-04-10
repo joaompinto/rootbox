@@ -38,7 +38,7 @@ def create(
         tar_fname = download(distro_url)
     pid = create_child_process(tar_fname)
     if command:
-        args = [sys.executable, "-m", "prenv", "join", str(pid), command]
+        args = [sys.executable, "-m", "rootbox", "join", str(pid), command]
         # Respect the no-sh behavior
         if no_shell:
             args.insert(4, "--no-sh")

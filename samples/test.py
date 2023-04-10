@@ -1,7 +1,7 @@
 import os
 
-from prenv.mount import MS_BIND, MS_PRIVATE, MS_REC, mount
-from prenv.unshare import set_user_level_root
+from rootbox.mount import MS_BIND, MS_PRIVATE, MS_REC, mount
+from rootbox.unshare import set_user_level_root
 
 set_user_level_root()
 

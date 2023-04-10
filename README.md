@@ -12,9 +12,7 @@ Rootbox is a tool for Linux and WSL that allows regular (unprivileged) users to 
 Rootbox uses Linux kernel namespaces to create contained environments.
 
 ## What is the difference between rootbox and Docker?
-The focus of rootbox is to provide a tool that can be used to run applications without the need to install dependencies on the host system.
-
- > rootbox does **NOT** aim to provide full isolation between environemtns and the host, for such use cases please consider using Docker or Podman.
+The focus of rootbox is to provide a tool that can be used to run applications without the need to install dependencies on the host system. Rootbox does **NOT** aim to provide full isolation between environemtns and the host, for such use cases please consider using Docker or Podman.
 
 ## What is nedded to run rootbox?
 

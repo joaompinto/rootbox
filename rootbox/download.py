@@ -1,10 +1,12 @@
+from typing import Union
+
 from .images import DockerImage, LXCImage
 from .images_cache import Cache
 
 cache = Cache()
 
 
-def download_image(image: LXCImage | DockerImage, ignore_cache=False):
+def download_image(image: Union[LXCImage, DockerImage], ignore_cache=False):
     """Download image (if not found in cache) and return it's filename"""
 
     cache_key = image.as_url()

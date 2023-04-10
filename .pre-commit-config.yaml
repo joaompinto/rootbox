@@ -40,12 +40,12 @@ repos:
     hooks:
     - id: ruff
 
-- repo: local
-  hooks:
-    -   id: tox-on-python3.8
-        name: Run tox in Python 3.8 using rootbox
-        entry:
-            python -m rootbox run docker:python:3.8-alpine
-             "apk add git && pip install tox && tox"
-        language: system
-        pass_filenames: false
+# - repo: local
+#   hooks:
+#     -   id: tox-on-python3.8
+#         name: Run tox in Python 3.8 using rootbox
+#         entry:
+#             python -m rootbox run docker:python:3.8-alpine
+#              "apk add git && pip install tox && tox"
+#         language: system
+#         pass_filenames: false

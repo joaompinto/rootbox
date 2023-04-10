@@ -15,7 +15,7 @@ def child_process(tar_fname) -> None:
     if message != "setup":
         raise Exception(f"Unexpected message from parent process: {message}")
     verbose(f"Received message from parent process: {message}")
-    mount_dir = prepare_rootfs(tar_fname, in_memory=True)
+    mount_dir = prepare_rootfs(tar_fname, in_memory=True, perform_chroot=False)
     conn.sendall(b"ok")
     conn.close()
 

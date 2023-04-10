@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Union
 
 import typer
 
@@ -10,7 +11,7 @@ def local_url(path: str) -> Path:
     return Path(path)
 
 
-def parse_image_url(image_url: str) -> LXCImage | DockerImage | Path:
+def parse_image_url(image_url: str) -> Union[LXCImage, DockerImage, Path]:
     """Validate the image url and return the url parts
     An image_url containing an ':' is considered a remote image.
     The following remote handlers are supported: lxc, docker, http, https

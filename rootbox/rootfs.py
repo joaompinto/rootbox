@@ -3,6 +3,7 @@ from pathlib import Path
 from tempfile import mkdtemp
 
 from .mount import MS_BIND, MS_PRIVATE, MS_REC, mount
+from .path import path_is_parent
 from .tar import extract_tar
 from .unshare import set_user_level_root
 
@@ -14,8 +15,13 @@ STD_MOUNTS = [
 ]
 
 
-def prepare_rootfs(rootfs_filename: str, in_memory):
+def prepare_rootfs(rootfs_filename: str, in_memory, perform_chroot=True) -> Path:
     set_user_level_root()
+    current_path = os.getcwd()
+    restore_path = None
+    if path_is_parent(os.path.expanduser("~"), current_path):
+        restore_path = current_path
+
     mount(None, "/", None, MS_REC | MS_PRIVATE)
     mount_dir = Path(mkdtemp())
     if in_memory:
@@ -31,4 +37,14 @@ def prepare_rootfs(rootfs_filename: str, in_memory):
     if Path(mount_dir, "etc").exists():
         resolv_conf.touch()
         mount("/etc/resolv.conf", f"{mount_dir}/etc/resolv.conf", None, MS_BIND)
+    if perform_chroot:
+        if restore_path:
+            target_restore_path = Path(mount_dir, restore_path[1:])
+            target_restore_path.mkdir(parents=True)
+            mount(restore_path, target_restore_path, None, MS_BIND | MS_REC)
+        else:
+            target_restore_path = "/"
+        mount("/etc/resolv.conf", f"{mount_dir}/etc/resolv.conf", None, MS_BIND)
+        os.chroot(mount_dir)
+        os.chdir(restore_path or "/")
     return mount_dir

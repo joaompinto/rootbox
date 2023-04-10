@@ -17,13 +17,7 @@ def run(
 ):
     image = parse_image_url(image_name)
     image_fname = download_image(image)
-    mount_dir = prepare_rootfs(image_fname, in_memory=True)
-    if chroot_break:
-        os.chdir(mount_dir)
-        os.system("bash")
-        exit(0)
-    os.chroot(mount_dir)
-    os.chdir("/")
+    prepare_rootfs(image_fname, in_memory=True, perform_chroot=True)
     if no_shell:
         command = command.split()
         os.execvp(command[0], command[:])

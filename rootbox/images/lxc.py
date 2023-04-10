@@ -14,14 +14,14 @@ LXC_URL_TEMPL = "https://images.linuxcontainers.org/images/{}/{}/{}/{}/{}/rootfs
 @dataclass
 class LXCImage:
     name: str
-    version: str = "latest"
+    version: str = None
     arch: str = "amd64"
     variant: str = "default"
-    build: str = ""
+    build: str = None
 
     def as_url(self) -> str:
         return url_to_filename(
-            f"lxc_{self.name}_{self.version}_{self.arch}_{self.variant}_{self.build}"
+            f"lxc_{self.name}_{self.version}_{self.arch}_{self.variant}_{self.build or ''}"
         )
 
     def download(self):

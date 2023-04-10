@@ -20,8 +20,17 @@ class Cache(object):
 
         return default
 
+    def get_all(self, cache_key, default=None):
+        for extension in [".tar.gz"]:
+            find = self.get(cache_key + extension)
+            if find:
+                return find
+        return default
+
     def put(self, filename, cache_key):
         """put a file into cache"""
         cached_fname = CACHE_PATH.joinpath(cache_key)
+        if ".tar" not in cached_fname.suffixes:
+            cached_fname = cached_fname.with_suffix(".tar.gz")
         shutil.move(filename, cached_fname)
         return cached_fname

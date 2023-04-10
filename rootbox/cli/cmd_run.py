@@ -13,10 +13,10 @@ def run(
     image_name: str = typer.Argument(...),
     no_shell: bool = typer.Option(False, "--no-sh"),
     command: Optional[str] = typer.Argument("/bin/sh", help="Command to be run"),
-    chroot_break: bool = typer.Option(False, "--break", help="Break into shell"),
+    only_from_cache: bool = typer.Option(False, "--only-from-cache"),
 ):
     image = parse_image_url(image_name)
-    image_fname = download_image(image)
+    image_fname = download_image(image, only_from_cache=only_from_cache)
     prepare_rootfs(image_fname, in_memory=True, perform_chroot=True)
     if no_shell:
         command = command.split()

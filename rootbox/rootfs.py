@@ -15,7 +15,7 @@ STD_MOUNTS = [
 ]
 
 
-def prepare_rootfs(rootfs_filename: str, in_memory, perform_chroot=True) -> Path:
+def prepare_rootfs(rootfs_filename: Path, in_memory, perform_chroot=True) -> Path:
     set_user_level_root()
     current_path = os.getcwd()
     restore_path = None
@@ -26,7 +26,10 @@ def prepare_rootfs(rootfs_filename: str, in_memory, perform_chroot=True) -> Path
     mount_dir = Path(mkdtemp())
     if in_memory:
         mount("tmpfs", mount_dir, "tmpfs")
-    extract_tar(rootfs_filename, mount_dir)
+    if ".tar" in rootfs_filename.suffixes:
+        extract_tar(rootfs_filename, mount_dir)
+    else:
+        raise NotImplementedError(f"Unsupported rootfs format: {rootfs_filename}")
     os.chdir(mount_dir)
     for mount_args in STD_MOUNTS:
         os.makedirs(mount_args[1], exist_ok=True)

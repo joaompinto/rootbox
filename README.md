@@ -36,7 +36,7 @@ The focus of rootbox is to provide a tool that can be used to run applications w
 |✅|apk|Alpine|
 |✅|pacman|ArchLinux|
 |✅|dnf|Alma; CentOS; Fedora; Rocky|
-|✅|xpbs|VoidLinux|
+|✅|xbps|VoidLinux|
 |✅|zypper|openSUSE|
 |❌|apt|Debian/Ubuntu|
 

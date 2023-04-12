@@ -14,9 +14,8 @@ class DockerImage:
     image_tag: str = "latest"
 
     def as_url(self) -> str:
-        return url_to_filename(
-            f"docker_{self.registry}_{self.image_name}_{self.image_tag}"
-        )
+        registry = self.registry.replace(".", "_")
+        return url_to_filename(f"docker_{registry}_{self.image_name}_{self.image_tag}")
 
     def download(self):
         return pull_docker_image(self.registry, self.image_name, self.image_tag)

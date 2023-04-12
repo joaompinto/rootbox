@@ -47,7 +47,6 @@ def prepare_rootfs(rootfs_filename: Path, in_memory, perform_chroot=True) -> Pat
             mount(restore_path, target_restore_path, None, MS_BIND | MS_REC)
         else:
             target_restore_path = "/"
-        mount("/etc/resolv.conf", f"{mount_dir}/etc/resolv.conf", None, MS_BIND)
         os.chroot(mount_dir)
         os.chdir(restore_path or "/")
     return mount_dir

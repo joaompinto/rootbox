@@ -31,6 +31,6 @@ class Cache(object):
         """put a file into cache"""
         cached_fname = CACHE_PATH.joinpath(cache_key)
         if ".tar" not in cached_fname.suffixes:
-            cached_fname = cached_fname.with_suffix(".tar.gz")
+            cached_fname = Path(f"{cached_fname}.tar.gz")
         shutil.move(filename, cached_fname)
         return cached_fname

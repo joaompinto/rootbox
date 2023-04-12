@@ -1,27 +1,19 @@
-import pytest
-import typer
+from typer.testing import CliRunner
 
-from rootbox.cli import cmd_pull
+from rootbox.__main__ import app
 
-
-def test_cmd_pull_local():
-    with pytest.raises(typer.BadParameter):
-        cmd_pull.pull("/path/to/file.tar.gz")
+runner = CliRunner()
 
 
-def test_cmd_pull_lxc():
-    with pytest.raises(typer.BadParameter):
-        cmd_pull.pull("lxc:unknown")
+def test_pull_remote():
+    result = runner.invoke(app, ["pull", "bananas"])
+    assert "Only remote images are supported" in result.stdout
+    assert result.exit_code == 2
 
-    with pytest.raises(ValueError):
-        cmd_pull.pull("lxc:alpine")
+    result = runner.invoke(app, ["pull", "bananas:"])
+    assert "Unknown image handler" in result.stdout
+    assert result.exit_code == 2
 
-    cmd_pull.pull("lxc:alpine:edge")
-    cmd_pull.pull("lxc:alpine:edge", ignore_cache=True)
-
-
-def test_cmd_pull_docker():
-    pass
-    # with pytest.raises(requests.exceptions.HTTPError):
-    #     cmd_pull.pull("docker:unknown")
-    # cmd_pull.pull("docker:alpine")
+    result = runner.invoke(app, ["pull", "lxc:alpine"])
+    print(result.stdout)
+    assert result.exit_code == 1

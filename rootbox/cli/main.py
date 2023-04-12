@@ -3,7 +3,7 @@ import typer
 is_verbose = False
 
 
-def verbose(
+def rootbox(
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose mode")
 ):
     if verbose:

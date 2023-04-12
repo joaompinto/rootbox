@@ -1,6 +1,6 @@
-from .cli import verbose as verbose_cli
+from .cli import main as rootbox
 
 
 def verbose(*args, **kwargs):
-    if verbose_cli.is_verbose:
+    if rootbox.is_verbose:
         print(*args, **kwargs)

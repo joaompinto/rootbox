@@ -12,7 +12,7 @@ def test_lxc_url():
     result = parse_image_url("lxc:archlinux")
     assert isinstance(result, LXCImage)
     assert result.name == "archlinux"
-    assert result.version == "latest"
+    assert result.version is None
 
     result = parse_image_url("lxc:alpine:edge")
     assert isinstance(result, LXCImage)

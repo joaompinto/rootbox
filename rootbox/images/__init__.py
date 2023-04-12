@@ -25,7 +25,6 @@ def parse_image_url(image_url: str) -> Union[LXCImage, DockerImage, Path]:
         /path/to/file.tar.gz
         /path/to/directory
     """
-
     if ":" not in image_url:
         return local_url(image_url)
 

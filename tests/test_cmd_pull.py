@@ -1,6 +1,7 @@
 from typer.testing import CliRunner
 
 from rootbox.__main__ import app
+from rootbox.images.lxc import NotSingleVersonError
 
 runner = CliRunner()
 
@@ -15,5 +16,5 @@ def test_pull_remote():
     assert result.exit_code == 2
 
     result = runner.invoke(app, ["pull", "lxc:alpine"])
-    print(result.stdout)
+    assert isinstance(result.exception, NotSingleVersonError)
     assert result.exit_code == 1

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import xdg
 
-SOCKETS_DIR = Path(xdg.xdg_runtime_dir(), "rootbox")
+SOCKETS_DIR = Path(xdg.xdg_runtime_dir() or "/tmp", "rootbox")
 
 
 def create_socket_bind():

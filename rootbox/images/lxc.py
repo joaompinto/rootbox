@@ -28,7 +28,7 @@ class LXCImage:
         return download_url(get_lcx_distro_url(self))
 
 
-class NotSingleVersonError(Exception):
+class NotSingleVersionError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
@@ -98,7 +98,7 @@ class LCXMetaData:
                 f"No image found matching {image_name} {distro_version} {distro_arch} {distro_variant}"
             )
         if len(matching_versions) > 1:
-            raise NotSingleVersonError(
+            raise NotSingleVersionError(
                 f"Found multiple versions for {image_name} {distro_version} {distro_arch}",
                 matching_versions,
             )

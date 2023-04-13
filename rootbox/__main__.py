@@ -14,5 +14,10 @@ app.add_typer(
 
 app.callback()(main.rootbox)
 
+
+def main():
+    app()
+
+
 if __name__ == "__main__":
     app()

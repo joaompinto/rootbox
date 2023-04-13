@@ -39,7 +39,7 @@ def rewrite_uid_map(uid, gid):
     time.sleep(0.1)
 
 
-def set_user_level_root():
+def setup_user_level_root():
     uid, gid = os.geteuid(), os.getegid()
     verbose("Creating user and mount namespaces")
     unshare(CLONE_NEWNS | CLONE_NEWUSER)

@@ -5,7 +5,7 @@ from tempfile import mkdtemp
 from .mount import MS_BIND, MS_PRIVATE, MS_REC, mount
 from .path import path_is_parent
 from .tar import extract_tar
-from .unshare import set_user_level_root
+from .unshare import setup_user_level_root
 
 STD_MOUNTS = [
     ("/proc", "proc/", None, MS_BIND | MS_REC),
@@ -15,8 +15,11 @@ STD_MOUNTS = [
 ]
 
 
-def prepare_rootfs(rootfs_filename: Path, in_memory, perform_chroot=True) -> Path:
-    set_user_level_root()
+def prepare_rootfs(
+    rootfs_filename: Path, in_memory: bool = True, perform_chroot=True
+) -> Path:
+    """Preate a new root mount directory"""
+    setup_user_level_root()
     current_path = os.getcwd()
     restore_path = None
     if path_is_parent(os.path.expanduser("~"), current_path):

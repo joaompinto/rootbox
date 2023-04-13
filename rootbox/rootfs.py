@@ -28,7 +28,7 @@ def prepare_rootfs(
     mount(None, "/", None, MS_REC | MS_PRIVATE)
     mount_dir = Path(mkdtemp())
     if in_memory:
-        mount("tmpfs", mount_dir, "tmpfs")
+        mount("tmpfs", mount_dir, "tmpfs", options="size=1G")
     if ".tar" in rootfs_filename.suffixes:
         extract_tar(rootfs_filename, mount_dir)
     else:

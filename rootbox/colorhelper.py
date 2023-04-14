@@ -34,7 +34,7 @@ def print_warn(message):
 
 
 def info(message):
-    return colored(message, "cyan")
+    return colored(message, "cyan", attrs=["bold"])
 
 
 def info_header(message):

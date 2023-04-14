@@ -8,6 +8,9 @@
 
 Rootbox is a tool for Linux and WSL that allows regular (unprivileged) users to deploy applications in a portable and reproducible way.
 
+![Rootbox in action](docs/img/rootbox_0.0.8.png)
+
+
 ## How does it work
 Rootbox uses Linux kernel namespaces to create contained environments.
 

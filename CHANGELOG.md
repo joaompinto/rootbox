@@ -7,11 +7,7 @@ All notable changes to the currrent release will be documented in this file.
 ## 0.0.8
 
 ### Added
-- Release specific CHANGELOG.md file
-- When using an interactive shell:
-    - adjust the prompt to show the container name.
-    - show host system information (cpu, ram)
-- Screenshot in the README.md demonstrating the interactive shell
+- Option `--save-to-tar` to save image file after run
 
 ### Changed
-- Set the ramdisk filesystem size to 1GB (was using default «50% of total  ram»)
+- TODO: Add --save-to-tar option on `rootbox run`

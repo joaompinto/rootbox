@@ -8,6 +8,7 @@ from .tar import extract_tar
 from .unshare import setup_user_level_root
 
 STD_MOUNTS = [
+    ("/", "host_root/", None, MS_BIND | MS_REC),
     ("/proc", "proc/", None, MS_BIND | MS_REC),
     ("/dev", "dev/", None, MS_BIND | MS_REC),
     ("/sys", "sys/", None, MS_BIND | MS_REC),

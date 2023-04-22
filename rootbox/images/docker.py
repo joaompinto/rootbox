@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from os import environ
 from tempfile import NamedTemporaryFile
 
-from drclient.cli.cmd_pull import pull
+from drclient.image import parse_image_url as docker_parse_image_url
+from drclient.image import pull_image
 
 DEFAULT_REGISTRY = environ.get("DOCKER_REGISTRY", "registry-1.docker.io")
 
@@ -29,24 +30,13 @@ def pull_docker_image(registry, repository, tag):
 def download(image_url):
     # Check if image is on cache
     with NamedTemporaryFile(delete=False) as tmp_file:
-        pull(image_url, tar_file=tmp_file.name, output_directory=None)
+        pull_image(image_url, tar_file=tmp_file.name, output_directory=None)
         tmp_file.flush()
     return tmp_file.name
 
 
-def parse_docker_url(image_name: str) -> tuple:
-    registry = DEFAULT_REGISTRY
-    tag = "latest"
-    if "/" in image_name:
-        first_part, other_parts = image_name.split("/", 1)
-        if "." in first_part:
-            image_name = other_parts
-            registry = f"{first_part}"
-    else:
-        image_name = f"library/{image_name}"
-    if ":" in image_name:
-        image_name, tag = image_name.split(":")
-    return DockerImage(registry, image_name, tag)
+def parse_image_url(image_url: str) -> DockerImage:
+    return docker_parse_image_url(image_url)
 
 
 def url_to_filename(url: str):

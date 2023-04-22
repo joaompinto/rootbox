@@ -16,9 +16,7 @@ STD_MOUNTS = [
 ]
 
 
-def prepare_rootfs(
-    rootfs_filename: Path, in_memory: bool = True, perform_chroot=True
-) -> Path:
+def prepare_rootfs(rootfs_filename: Path, ram_disk_size, perform_chroot=True) -> Path:
     """Preate a new root mount directory"""
     setup_user_level_root()
     current_path = os.getcwd()
@@ -28,8 +26,8 @@ def prepare_rootfs(
 
     mount(None, "/", None, MS_REC | MS_PRIVATE)
     mount_dir = Path(mkdtemp())
-    if in_memory:
-        mount("tmpfs", mount_dir, "tmpfs", options="size=1G")
+    if ram_disk_size:
+        mount("tmpfs", mount_dir, "tmpfs", options=f"size={ram_disk_size}G")
     if ".tar" in rootfs_filename.suffixes:
         extract_tar(rootfs_filename, mount_dir)
     else:
@@ -44,6 +42,7 @@ def prepare_rootfs(
     if Path(mount_dir, "etc").exists():
         resolv_conf.touch()
         mount("/etc/resolv.conf", f"{mount_dir}/etc/resolv.conf", None, MS_BIND)
+
     if perform_chroot:
         if restore_path:
             target_restore_path = Path(mount_dir, restore_path[1:])

@@ -3,7 +3,8 @@ from typing import Union
 
 import typer
 
-from .docker import DockerImage, parse_docker_url
+from .docker import DockerImage
+from .docker import parse_image_url as parse_docker_url
 from .lxc import LXCImage
 
 
@@ -33,7 +34,7 @@ def parse_image_url(image_url: str) -> Union[LXCImage, DockerImage, Path]:
     if handler == "lxc":
         return LXCImage(*url.split(":"))
     if handler == "docker":
-        return parse_docker_url(url)
+        return DockerImage(*parse_docker_url(url))
     raise typer.BadParameter(
         f"Unknown image handler '{handler}', images must be prefixed with 'lxc:' or 'docker:"
     )

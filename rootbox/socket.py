@@ -9,12 +9,19 @@ import xdg
 SOCKETS_DIR = Path(xdg.xdg_runtime_dir() or "/tmp", "rootbox")
 
 
+def silent_unlink(path: Path) -> None:
+    try:
+        path.unlink(path)
+    except FileNotFoundError:
+        pass
+
+
 def create_socket_bind():
     my_pid = os.getpid()
     SOCKETS_DIR.mkdir(parents=True, exist_ok=True)
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     socket_path = Path(SOCKETS_DIR, f"rootbox.{my_pid}.sock")
-    atexit.register(os.unlink, socket_path.as_posix())
+    atexit.register(silent_unlink, socket_path.as_posix())
     sock.bind(socket_path.as_posix())
     return sock
 

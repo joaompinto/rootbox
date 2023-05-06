@@ -7,3 +7,6 @@ write_to = "rootbox/version.py"
 
 [tool.ruff]
 line-length = 120
+
+[tool.isort]
+profile = "black"

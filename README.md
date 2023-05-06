@@ -22,13 +22,11 @@ Rootbox allows to operater containers in two different modes: simple execution a
 
 ### Simple Containers
 
-A simple container is created for the purpose of executing a command/process «interactive or not». The lifecycle of this container is associated with the new process lifetime. Once the process terminates all the associated resources will be destroyed. The `rootbox run` command provides simples containers.
+A simple container is created for the purpose of executing a command/process «interactive or not». The lifecycle of this container is associated with the new process lifetime. Once the process terminates all the associated resources will be destroyed. The `rootbox run` command provides simple containers.
 
 ### Managed Containers
 
-A managed container is created for the purpose of executing multiple processes/commands which share a common filesystem view. A managed container is associated with a manager process which is responsible for the management of the container.
-
-Once the manager process terminates all the associated resources will be destroyed. The `rootbox start` command provides managed containers.
+A managed container is created for the purpose of executing multiple processes/commands which share a common filesystem view. A managed container is associated with a manager process which provides some management capabilities to the container. Once the manager process terminates all the associated resources will be destroyed. The `rootbox start` command provides managed containers.
 
 Unlike other container tecnhologies (e.g. Docker), Rootbox does not use a multi container daemon. Instead, Rootbox provides a single container manager which is responsible for the management of a single container.
 

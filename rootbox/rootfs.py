@@ -13,16 +13,19 @@ STD_MOUNTS = [
 ]
 
 
-def prepare_root_mounts(ram_disk_size: int = 1) -> Path:
-    """Setups the root mounts according to the the following tasks:
-    1. Create a tmpfs file system and mount it on a random tmp directory
-    2. Create the standards mounts on top of it
+def create_root_tmpfs(ram_disk_size: int = 1):
+    """Create a tmpfs file system and mount it on a random tmp directory"""
+    if os.getuid() != 0:
+        raise PermissionError("This function must be run with uid 0")
+    mount(None, "/", None, MS_REC | MS_PRIVATE)
+    mount_dir = Path(mkdtemp())
+    mount("tmpfs", mount_dir, "tmpfs", options=f"size={ram_disk_size}G")
+    return mount_dir
 
-    Args:
-        ram_disk_size (int): The size in GBs for the root file system
-    """
 
-    """Preate a new root mount directory"""
+def bind_standard_mounts(mount_dir):
+    """Create the standards mounts on top of mount_dir"""
+
     if os.getuid() != 0:
         raise PermissionError("This function must be run with uid 0")
     # setup_user_level_root()
@@ -31,15 +34,11 @@ def prepare_root_mounts(ram_disk_size: int = 1) -> Path:
     # if path_is_parent(os.path.expanduser("~"), current_path):
     #    restore_path = current_path
 
-    mount(None, "/", None, MS_REC | MS_PRIVATE)
-    mount_dir = Path(mkdtemp())
-    mount("tmpfs", mount_dir, "tmpfs", options=f"size={ram_disk_size}G")
     for mount_args in STD_MOUNTS:
         tmp_mount_args = list(mount_args)
         tmp_mount_args[1] = f"{mount_dir}/{tmp_mount_args[1]}"
         os.makedirs(tmp_mount_args[1])
         mount(*tmp_mount_args)
-    return Path(mount_dir)
 
 
 def bind_mount_to_host(mount_dir, path):

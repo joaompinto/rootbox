@@ -1,9 +1,7 @@
 """  pull an image from a remote repository  """
-from pathlib import Path
-
 import typer
 
-from ..images import download_image, parse_image_url
+from ..images import download_image
 
 
 def pull(
@@ -12,9 +10,4 @@ def pull(
         False, "--ignore-cache", help="Ignore cached images"
     ),
 ):
-    image = parse_image_url(image_name)
-    if isinstance(image, Path):
-        raise typer.BadParameter(
-            "Only remote images are supported, name starting with distro:, http:, https:"
-        )
-    download_image(image, ignore_cache, verbose_cache_info=True)
+    download_image(image_name, verbose_cache_info=True, ignore_cache=ignore_cache)

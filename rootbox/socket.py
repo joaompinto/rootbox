@@ -11,7 +11,7 @@ SOCKETS_DIR = Path(xdg.xdg_runtime_dir() or "/tmp", "rootbox")
 
 def silent_unlink(path: Path) -> None:
     try:
-        path.unlink(path)
+        path.unlink()
     except FileNotFoundError:
         pass
 

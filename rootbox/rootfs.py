@@ -3,9 +3,6 @@ from pathlib import Path
 from tempfile import mkdtemp
 
 from .mount import MS_BIND, MS_PRIVATE, MS_REC, mount
-from .path import path_is_parent
-from .tar import extract_tar
-from .unshare import setup_user_level_root
 
 STD_MOUNTS = [
     ("/", "host_root/", None, MS_BIND | MS_REC),
@@ -16,40 +13,51 @@ STD_MOUNTS = [
 ]
 
 
-def prepare_rootfs(rootfs_filename: Path, ram_disk_size, perform_chroot=True) -> Path:
+def prepare_root_mounts(ram_disk_size: int = 1) -> Path:
+    """Setups the root mounts according to the the following tasks:
+    1. Create a tmpfs file system and mount it on a random tmp directory
+    2. Create the standards mounts on top of it
+
+    Args:
+        ram_disk_size (int): The size in GBs for the root file system
+    """
+
     """Preate a new root mount directory"""
-    setup_user_level_root()
-    current_path = os.getcwd()
-    restore_path = None
-    if path_is_parent(os.path.expanduser("~"), current_path):
-        restore_path = current_path
+    if os.getuid() != 0:
+        raise PermissionError("This function must be run with uid 0")
+    # setup_user_level_root()
+    # current_path = os.getcwd()
+    # restore_path = None
+    # if path_is_parent(os.path.expanduser("~"), current_path):
+    #    restore_path = current_path
 
     mount(None, "/", None, MS_REC | MS_PRIVATE)
     mount_dir = Path(mkdtemp())
-    if ram_disk_size:
-        mount("tmpfs", mount_dir, "tmpfs", options=f"size={ram_disk_size}G")
-    if ".tar" in rootfs_filename.suffixes:
-        extract_tar(rootfs_filename, mount_dir)
-    else:
-        raise NotImplementedError(f"Unsupported rootfs format: {rootfs_filename}")
-    os.chdir(mount_dir)
+    mount("tmpfs", mount_dir, "tmpfs", options=f"size={ram_disk_size}G")
     for mount_args in STD_MOUNTS:
-        os.makedirs(mount_args[1], exist_ok=True)
-        mount(*mount_args)
-    resolv_conf = Path(f"{mount_dir}/etc/resolv.conf")
-    if resolv_conf.is_symlink():
-        resolv_conf.unlink()
-    if Path(mount_dir, "etc").exists():
-        resolv_conf.touch()
-        mount("/etc/resolv.conf", f"{mount_dir}/etc/resolv.conf", None, MS_BIND)
+        tmp_mount_args = list(mount_args)
+        tmp_mount_args[1] = f"{mount_dir}/{tmp_mount_args[1]}"
+        os.makedirs(tmp_mount_args[1])
+        mount(*tmp_mount_args)
+    return Path(mount_dir)
 
-    if perform_chroot:
-        if restore_path:
-            target_restore_path = Path(mount_dir, restore_path[1:])
-            target_restore_path.mkdir(parents=True)
-            mount(restore_path, target_restore_path, None, MS_BIND | MS_REC)
-        else:
-            target_restore_path = "/"
-        os.chroot(mount_dir)
-        os.chdir(restore_path or "/")
-    return mount_dir
+
+def bind_mount_to_host(mount_dir, path):
+    target_path = Path(f"{mount_dir}{path}")
+
+    if target_path.is_symlink():
+        target_path.unlink()
+    if target_path.parent.exists():
+        target_path.touch()
+        mount(path, target_path, None, MS_BIND)
+
+    # if perform_chroot:
+    #     if restore_path:
+    #         target_restore_path = Path(mount_dir, restore_path[1:])
+    #         target_restore_path.mkdir(parents=True)
+    #         mount(restore_path, target_restore_path, None, MS_BIND | MS_REC)
+    #     else:
+    #         target_restore_path = "/"
+    #     os.chroot(mount_dir)
+    #     os.chdir(restore_path or "/")
+    # return mount_dir

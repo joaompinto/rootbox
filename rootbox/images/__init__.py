@@ -14,7 +14,7 @@ def local_url(path: str) -> Path:
 cache = Cache()
 
 
-def parse_image_url(image_url: str) -> Union[LXCImage, Path]:
+def _parse_image_url(image_url: str) -> Union[LXCImage, Path]:
     """Validate the image url and return the url parts
     An image_url containing an ':' is considered a remote image.
     The following remote handlers are supported: lxc, http, https
@@ -45,13 +45,10 @@ def parse_image_url(image_url: str) -> Union[LXCImage, Path]:
 
 
 def download_image(
-    image: LXCImage, ignore_cache=False, only_from_cache=False, verbose_cache_info=False
+    image_url: str, verbose_cache_info: bool = False, ignore_cache: bool = False
 ):
     """Download image (if not found in cache) and return it's filename"""
-    assert not (
-        ignore_cache and only_from_cache
-    )  # ignore_cache and only_from_cache are mutually exclusive
-
+    image = _parse_image_url(image_url)
     cache_key = image.as_url()
     if ignore_cache:
         cached_fname = None
@@ -62,9 +59,5 @@ def download_image(
         if verbose_cache_info:
             print(f"Found cached image at {cached_fname}")
         return cached_fname
-    else:
-        if only_from_cache:
-            raise ValueError(f"Image {image.as_url()} not found in cache")
-
     fname = image.download()
     return cache.put(fname, cache_key)

@@ -6,7 +6,6 @@ from typing import Optional
 
 import typer
 
-from ..images import download_image, parse_image_url
 from ..process import create_manager_process
 
 
@@ -15,9 +14,7 @@ def start(
     no_shell: bool = typer.Option(False, "--no-sh", help="Run command without a shell"),
     command: Optional[str] = typer.Argument(None, help="Command to be run"),
 ):
-    image = parse_image_url(image_name)
-    image_fname = download_image(image)
-    pid = create_manager_process(image_fname)
+    pid = create_manager_process(image_name)
     config_dir = Path.home().joinpath(".rootbox")
     config_dir.mkdir(exist_ok=True)
     Path(config_dir, ".lastpid").write_text(str(pid))

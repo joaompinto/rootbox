@@ -1,14 +1,14 @@
 import os
 import sys
 
+from .base import base_setup
 from .colorhelper import info, print_error
-from .rootfs import prepare_rootfs
 from .socket import create_socket_bind, get_process_socket
 from .verbose import verbose
 
 
 def manager_process(tar_fname) -> None:
-    """The manager proccess perofmrs the follwing maint tasks
+    """The manager proccess performs the follwing maint tasks
 
     1. Creates a unix socket and waits to receive a connection and a "setup" message
     2. Once the message is received, it calls prepare_rootfs() function
@@ -24,7 +24,7 @@ def manager_process(tar_fname) -> None:
     if message != "setup":
         raise Exception(f"Unexpected message from parent process: {message}")
     verbose(f"Received message from parent process: {message}")
-    mount_dir = prepare_rootfs(tar_fname, 1, perform_chroot=False)
+    root_mnt = base_setup(tar_fname)
     conn.sendall(b"ok")
     conn.close()
 
@@ -35,7 +35,7 @@ def manager_process(tar_fname) -> None:
             conn.close()
             break
         if message == "info":
-            conn.sendall(mount_dir.as_posix().encode("utf-8"))
+            conn.sendall(root_mnt.as_posix().encode("utf-8"))
         else:
             print("Received unexpeted message from parent process: ", message)
         conn.close()

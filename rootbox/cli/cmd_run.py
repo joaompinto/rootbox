@@ -7,9 +7,8 @@ from typing import Optional
 import typer
 from typing_extensions import Annotated
 
-from ..images import download_image, parse_image_url
+from ..base import base_setup
 from ..mount_checker import MountChecker
-from ..rootfs import prepare_rootfs
 from ..shell.execute import execute
 from ..unshare import CLONE_NEWNET, unshare
 
@@ -24,24 +23,17 @@ def run(
         1, "--ram-disk", "-r", help="Size of the ram disk (GBs)"
     ),
     command: Annotated[str, typer.Argument(help="Command to be run")] = None,
-    only_from_cache: bool = typer.Option(False, "--only-from-cache"),
     tar_file: Optional[Path] = typer.Option(None, "--tar-file", "-t"),
 ):
     if no_shell and command == "/bin/sh":
         raise typer.BadParameter("--no-shell was provided but no command was given")
 
-    image = parse_image_url(image_name)
-    if isinstance(image, Path):
-        image_fname = image
-        image_prompt_name = f"file:{image.name}"
-    else:
-        image_fname = download_image(image, only_from_cache=only_from_cache)
-        image_prompt_name = image_name
-    mount_dir = prepare_rootfs(image_fname, ram_disk_size, perform_chroot=True)
+    mount_dir = base_setup(image_name)
 
     if no_net:
         unshare(CLONE_NEWNET)
-    execute(image_prompt_name, mount_dir, command, use_shell=not no_shell)
+
+    execute(image_name, command, use_shell=not no_shell)
     MountChecker.read_mounts()
     os.chroot("/host_root")
     if tar_file:

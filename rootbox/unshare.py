@@ -1,6 +1,5 @@
 import ctypes
 import os
-import time
 from pathlib import Path
 
 from .verbose import verbose
@@ -35,11 +34,10 @@ def rewrite_uid_map(uid, gid):
     Path("/proc/self/uid_map").write_text(f"0 {uid} 1")
     Path("/proc/self/setgroups").write_text("deny")
     Path("/proc/self/gid_map").write_text(f"0 {gid} 1")
-    # wait for the uid/gid mapping to take effect
-    time.sleep(0.1)
 
 
 def setup_user_level_root():
+    """Create user and mount namespaces and map the current user to root."""
     uid, gid = os.geteuid(), os.getegid()
     verbose("Creating user and mount namespaces")
     unshare(CLONE_NEWNS | CLONE_NEWUSER)

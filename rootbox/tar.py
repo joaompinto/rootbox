@@ -1,15 +1,22 @@
-from __future__ import print_function
+"""
+We use tar to extract the image instead of tarfile because
+before Python3.11.4 tarfile does not support member filtering
+that we need to ignore certain files in the image.
+"""
 
-import tarfile
+import os
+
+from print_err import print_err
 
 
 def extract_tar(tar_fname, dest_dir):
-    tarfile.os.chown = (
-        lambda x, y, z: 0
-    )  # Monkey patch chown because we don't care about ownership
-
-    tarfile.os.mknod = (
-        lambda x, y, z: 0
-    )  # Monkey patch mknod because some layers include devices
-    with tarfile.open(tar_fname) as image_tar:
-        image_tar.extractall(dest_dir, numeric_owner=True)
+    excludes_str = " ".join(
+        [
+            f"--exclude='{e}'"
+            for e in ["./dev", "./sys", "./proc", "./run", "./tmp", "./host_root"]
+        ]
+    )
+    cmd = f"tar  -C {dest_dir} -xf {tar_fname} {excludes_str} --no-same-owner"
+    rc = os.system(cmd)
+    if rc != 0:
+        print_err("Failed to extract tar file")

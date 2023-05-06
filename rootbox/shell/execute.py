@@ -7,9 +7,7 @@ from pathlib import Path
 from .systeminfo import print_system_info
 
 
-def execute(
-    image_name: str, moundir: Path, command: str, use_shell: bool = True
-) -> None:
+def execute(image_name: str, command: str = None, use_shell: bool = True) -> None:
     """Execute the command in the container as a shell command
     or an interactive shell if no command is provided"""
     if command is None:

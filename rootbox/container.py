@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from .enter import get_fd_for_process, set_namespace
-from .images import download_image, parse_image_url
+from .images import download_image
 from .process import create_manager_process
 from .socket import get_process_socket
 
@@ -20,8 +20,7 @@ def Container(image_name: str):
 class ContainerManager:
     def __init__(self, image_name) -> None:
         self.child_pid = None
-        image = parse_image_url(image_name)
-        image_fname = download_image(image)
+        image_fname = download_image(image_name)
         pid = create_manager_process(image_fname)
         self.stop_pid = os.getpid()
         self.pid = pid

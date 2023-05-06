@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 class MountChecker:
-    mounts: list[str] = []
+    mounts: list = []
 
     @staticmethod
     def read_mounts() -> list[str]:

@@ -7,8 +7,7 @@ from typing import Optional
 import typer
 from typing_extensions import Annotated
 
-from ..download import download_image
-from ..images import parse_image_url
+from ..images import download_image, parse_image_url
 from ..mount_checker import MountChecker
 from ..rootfs import prepare_rootfs
 from ..shell.execute import execute

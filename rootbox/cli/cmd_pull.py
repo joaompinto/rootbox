@@ -3,8 +3,7 @@ from pathlib import Path
 
 import typer
 
-from ..download import download_image
-from ..images import parse_image_url
+from ..images import download_image, parse_image_url
 
 
 def pull(

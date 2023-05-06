@@ -11,6 +11,23 @@ LCX_INDEX = "https://images.linuxcontainers.org/meta/1.0/index-user"
 LXC_URL_TEMPL = "https://images.linuxcontainers.org/images/{}/{}/{}/{}/{}/rootfs.tar.xz"
 
 
+class MissingVersion(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+def validate_image_name(image_name):
+    parts = image_name.split(":")
+    distro_name = parts[0]
+    if len(parts) == 1:
+        metadata = LCXMetaData()
+        msg = f"You must provide a version for the lxc image `{distro_name}`"
+        versions = metadata.get_versions(distro_name)
+        if versions:
+            msg += f"\nAvailable versions: {', '.join(versions)}"
+        raise typer.BadParameter(msg)
+
+
 @dataclass
 class LXCImage:
     name: str
@@ -26,18 +43,6 @@ class LXCImage:
 
     def download(self):
         return download_url(get_lcx_distro_url(self))
-
-    @staticmethod
-    def validate(url):
-        parts = url.split(":")
-        distro_name = parts[0]
-        if len(parts) == 1:
-            metadata = LCXMetaData()
-            print(f"You must provide a version for the lxc image `{distro_name}`")
-            versions = metadata.get_versions(distro_name)
-            if versions:
-                print(f"Available versions: {', '.join(versions)}")
-        exit(2)
 
 
 class NotSingleVersionError(Exception):

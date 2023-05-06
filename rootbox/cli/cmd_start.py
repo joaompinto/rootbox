@@ -6,9 +6,8 @@ from typing import Optional
 
 import typer
 
-from ..download import download_image
-from ..images import parse_image_url
-from ..process import create_child_process
+from ..images import download_image, parse_image_url
+from ..process import create_manager_process
 
 
 def start(
@@ -18,7 +17,7 @@ def start(
 ):
     image = parse_image_url(image_name)
     image_fname = download_image(image)
-    pid = create_child_process(image_fname)
+    pid = create_manager_process(image_fname)
     config_dir = Path.home().joinpath(".rootbox")
     config_dir.mkdir(exist_ok=True)
     Path(config_dir, ".lastpid").write_text(str(pid))

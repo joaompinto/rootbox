@@ -8,6 +8,7 @@ All notable changes to the currrent release will be documented in this file.
 
 ### Added
 
+- Proof of concept library for running commands in a container
 
 ### Changed
 

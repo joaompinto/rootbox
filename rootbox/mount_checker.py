@@ -5,7 +5,7 @@ class MountChecker:
     mounts: list = []
 
     @staticmethod
-    def read_mounts() -> list[str]:
+    def read_mounts():
         mounts = []
         with open("/proc/mounts") as f:
             for line in f:

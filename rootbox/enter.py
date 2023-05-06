@@ -1,4 +1,5 @@
 import ctypes
+import ctypes.util
 import os
 
 from .socket import get_process_socket

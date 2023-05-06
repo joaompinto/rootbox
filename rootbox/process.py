@@ -1,4 +1,5 @@
 import os
+import sys
 
 from .colorhelper import info, print_error
 from .rootfs import prepare_rootfs
@@ -15,7 +16,7 @@ def child_process(tar_fname) -> None:
     if message != "setup":
         raise Exception(f"Unexpected message from parent process: {message}")
     verbose(f"Received message from parent process: {message}")
-    mount_dir = prepare_rootfs(tar_fname, in_memory=True, perform_chroot=False)
+    mount_dir = prepare_rootfs(tar_fname, 1, perform_chroot=False)
     conn.sendall(b"ok")
     conn.close()
 
@@ -37,7 +38,10 @@ def parent_process(pid: int) -> None:
     # Wait for the setup result
     message = conn.recv(1024).decode("utf-8")
     if message == "ok":
-        print("Instance setup successfully with PID:", info(pid))
+        if sys.stdout.isatty():
+            print("Instance setup successfully with PID:", info(pid))
+        else:
+            print(pid)
     else:
         print_error(f"Failed to setup the instance: {message}")
         exit(2)

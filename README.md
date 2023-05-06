@@ -8,14 +8,29 @@
 
 Rootbox is a tool for Linux and WSL that allows regular (unprivileged) users to deploy applications in a portable and reproducible way.
 
-![Rootbox in action](docs/img/rootbox_0.0.8.png)
-
+![Rootbox in action](https://github.com/joaompinto/rootbox/blob/main/docs/img/rootbox_0.0.8.png?raw=true)
 
 ## How does it work
 Rootbox uses Linux kernel namespaces to create contained environments.
 
 ## What is the difference between rootbox and Docker?
 The focus of rootbox is to provide a tool that can be used to run applications without the need to install dependencies on the host system. Rootbox does **NOT** aim to provide full isolation between environemtns and the host, for such use cases please consider using Docker or Podman.
+
+## Container Modes
+
+Rootbox allows to operater containers in two different modes: simple execution and managed execution.
+
+### Simple Containers
+
+A simple container is created for the purpose of executing a command/process «interactive or not». The lifecycle of this container is associated with the new process lifetime. Once the process terminates all the associated resources will be destroyed. The `rootbox run` command provides simples containers.
+
+## Managed Containers
+
+A managed container is created for the purpose of executing multiple processes/commands which share a common filesystem view. A managed container is associated with a manager process which is responsible for the management of the container.
+
+Once the manager process terminates all the associated resources will be destroyed. The `rootbox start` command provides managed containers.
+
+Unlike other container tecnhologies (e.g. Docker), Rootbox does not use a multi container daemon. Instead, Rootbox provides a single container manager which is responsible for the management of a single container.
 
 ## What is nedded to run rootbox?
 - A Linux distrubtion or Linux on Windows with WSL (Kernel version >=4.18)
@@ -44,12 +59,6 @@ pip install rootbox
 ```
 ## How to use
 
-List all the distributions available from the LXC project
-```sh
-# Check the list of supported distro names in the table above
-rootbox lxc list
-```
-
 ### Run an in-memory single run container
 Run a shell in an Alpine Linux container
 ```sh
@@ -62,9 +71,9 @@ rootbox run lxc:alpine:3.17 "apk --version"
 
 ### Create an in-memory multi run container
 ```sh
-rootbox create lxc:alpine:3.17
+rootbox start lxc:alpine:3.17
 ```
 ### Execute a command in a container
 ```sh
-rootbox execute lxc:alpine:3.17 "apk --version"
+rootbox exec "apk --version"
 ```

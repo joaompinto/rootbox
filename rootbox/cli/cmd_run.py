@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 import typer
+from typing_extensions import Annotated
 
 from ..download import download_image
 from ..images import parse_image_url
@@ -23,7 +24,7 @@ def run(
     ram_disk_size: Optional[int] = typer.Option(
         1, "--ram-disk", "-r", help="Size of the ram disk (GBs)"
     ),
-    command: Optional[str] = typer.Argument(None, help="Command to be run"),
+    command: Annotated[str, typer.Argument(help="Command to be run")] = None,
     only_from_cache: bool = typer.Option(False, "--only-from-cache"),
     tar_file: Optional[Path] = typer.Option(None, "--tar-file", "-t"),
 ):

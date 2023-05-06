@@ -8,9 +8,15 @@ All notable changes to the currrent release will be documented in this file.
 
 ### Added
 
+- Documentation about the simple and managed container modes
+
+
 ### Changed
-- TODO: Add --save-to-tar option on `rootbox run`
+
+- Renamed "create" to "start"
+- `exec` always uses the pid from the last started container
+
 
 ### Fixed
 
-- Ignore FilenotFoundError when trying to remove a non-existing file
+- socket unlink on process termination

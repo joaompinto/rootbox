@@ -21,7 +21,7 @@ def create_socket_bind():
     SOCKETS_DIR.mkdir(parents=True, exist_ok=True)
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     socket_path = Path(SOCKETS_DIR, f"rootbox.{my_pid}.sock")
-    atexit.register(silent_unlink, socket_path.as_posix())
+    atexit.register(silent_unlink, socket_path)
     sock.bind(socket_path.as_posix())
     return sock
 

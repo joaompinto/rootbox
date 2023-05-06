@@ -38,7 +38,6 @@ Unlike other container tecnhologies (e.g. Docker), Rootbox does not use a multi 
 ## What applications can I run with rootbox?
 
 - images from the Linux Containers project ([LXC](https://https://images.linuxcontainers.org/)).
-- images from the Docker Hub registry ([Docker Hub](https://hub.docker.com/))
 
 ## Supported package managers
 

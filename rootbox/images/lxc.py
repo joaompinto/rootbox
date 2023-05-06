@@ -14,7 +14,7 @@ LXC_URL_TEMPL = "https://images.linuxcontainers.org/images/{}/{}/{}/{}/{}/rootfs
 @dataclass
 class LXCImage:
     name: str
-    version: str = None
+    version: str
     arch: str = "amd64"
     variant: str = "default"
     build: str = None
@@ -26,6 +26,18 @@ class LXCImage:
 
     def download(self):
         return download_url(get_lcx_distro_url(self))
+
+    @staticmethod
+    def validate(url):
+        parts = url.split(":")
+        distro_name = parts[0]
+        if len(parts) == 1:
+            metadata = LCXMetaData()
+            print(f"You must provide a version for the lxc image `{distro_name}`")
+            versions = metadata.get_versions(distro_name)
+            if versions:
+                print(f"Available versions: {', '.join(versions)}")
+        exit(2)
 
 
 class NotSingleVersionError(Exception):
@@ -50,29 +62,30 @@ class LCXMetaData:
     def distros(self):
         return tuple(set([item["name"] for item in self._index]))
 
-    def versions(self, image_name, distro_version, distro_arch, distro_variant):
-        return tuple(
-            set(
-                [
-                    item["version"]
-                    for item in self._index
-                    if item["name"] == image_name
-                    and item["arch"] == distro_arch
-                    and item["variant"] == distro_variant
-                    and (item["version"] == distro_version if distro_version else True)
-                ]
-            )
-        )
+    def versions(self, distro_name, distro_version, distro_arch, distro_variant):
+        found_versions = []
+        for item in self._index:
+            if (
+                item["name"] == distro_name
+                and item["arch"] == distro_arch
+                and item["variant"] == distro_variant
+                and (item["version"] == distro_version if distro_version else True)
+            ):
+                found_versions.append(item["version"])
+        return found_versions
+
+    def get_versions(self, distro_name: str):
+        return self.versions(distro_name, None, "amd64", "default")
 
     def builds(
-        self, image_name, distro_version, distro_arch, distro_variant, distro_build
+        self, distro_name, distro_version, distro_arch, distro_variant, distro_build
     ):
         return tuple(
             set(
                 [
                     item["build"]
                     for item in self._index
-                    if item["name"] == image_name
+                    if item["name"] == distro_name
                     and item["arch"] == distro_arch
                     and item["variant"] == distro_variant
                     and item["version"] == distro_version

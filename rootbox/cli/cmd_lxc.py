@@ -16,5 +16,13 @@ def list(item: Optional[str] = typer.Argument(None)):
 
 
 @app.command()
-def info(item: str):
-    print(f"info item: {item}")
+def info(distro_name: str):
+    lcx_meta = LCXMetaData()
+    if distro_name not in lcx_meta.distros():
+        error_text = (
+            f"Unknown distro `{distro_name}`\n"
+            f"Known distros: {', '.join(lcx_meta.distros())}"
+        )
+        raise typer.BadParameter(error_text)
+    versions = ", ".join([version for version in lcx_meta.get_versions(distro_name)])
+    print(f"Versions for `{distro_name} (amd64)`: {versions}")

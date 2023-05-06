@@ -1,13 +1,11 @@
-from typing import Union
-
-from .images import DockerImage, LXCImage
+from .images import LXCImage
 from .images_cache import Cache
 
 cache = Cache()
 
 
 def download_image(
-    image: Union[LXCImage, DockerImage], ignore_cache=False, only_from_cache=False
+    image: LXCImage, ignore_cache=False, only_from_cache=False, verbose_cache_info=False
 ):
     """Download image (if not found in cache) and return it's filename"""
     assert not (
@@ -21,6 +19,8 @@ def download_image(
         cached_fname = cache.get_all(cache_key)
 
     if cached_fname:
+        if verbose_cache_info:
+            print(f"Found cached image at {cached_fname}")
         return cached_fname
     else:
         if only_from_cache:

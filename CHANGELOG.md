@@ -4,19 +4,15 @@ All notable changes to the currrent release will be documented in this file.
 
 ---
 
-## 0.0.10
+## 0.0.11
 
 ### Added
-
-- Documentation about the simple and managed container modes
 
 
 ### Changed
 
-- Renamed "create" to "start"
-- `exec` always uses the pid from the last started container
+- lxc: images explicitely require a :version tag
 
+### Removed
 
-### Fixed
-
-- socket unlink on process termination
+- Support for docker: images

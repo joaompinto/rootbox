@@ -16,6 +16,6 @@ def pull(
     image = parse_image_url(image_name)
     if isinstance(image, Path):
         raise typer.BadParameter(
-            "Only remote images are supported, name starting with  docker:, lxc:, http:, https:"
+            "Only remote images are supported, name starting with distro:, http:, https:"
         )
-    download_image(image, ignore_cache)
+    download_image(image, ignore_cache, verbose_cache_info=True)

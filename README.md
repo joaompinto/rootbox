@@ -1,8 +1,11 @@
 # rootbox
 
-[![PyPi](https://img.shields.io/pypi/v/rootbox.svg?style=flat-square)](https://pypi.python.org/pypi/rootbox)
+[![image](https://img.shields.io/pypi/v/ruff.svg)](https://pypi.python.org/pypi/rootbox)
+[![image](https://img.shields.io/pypi/pyversions/rootbox.svg)](https://pypi.python.org/pypi/rootbox)
 ![License](https://img.shields.io/github/license/joaompinto/rootbox?style=flat-square)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/ambv/black)
+[![Actions status](https://github.com/joaompinto/rootbox/actions/workflows/CI/badge.svg
+)](https://github.com/joaompinto/rootbox/actions)
 
 ## What is rootbox?
 

@@ -45,6 +45,6 @@ repos:
 #     -   id: run-pytest
 #         name: Run tests using pytest
 #         entry:
-#             python -m pytest --forked
+#             python -m pytest --forked -s -v
 #         language: system
 #         pass_filenames: false

@@ -57,3 +57,6 @@ class ContainerManager:
             rc = os.system(f"{command}")
             if rc != 0:
                 raise RuntimeError(f"Command failed with exit code {rc}")
+            # We do not want to raise SystemExit here, because we do not want
+            # to run the atexit handlers in the child.
+            os._exit(rc)

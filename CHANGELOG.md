@@ -12,6 +12,7 @@ All notable changes to the currrent release will be documented in this file.
 
 ### Changed
 
+- README beautification based the Ruff README
 - lxc: images explicitely require a :version tag
 
 ### Removed

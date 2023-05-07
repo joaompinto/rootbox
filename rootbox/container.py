@@ -3,14 +3,13 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from .enter import get_fd_for_process, set_namespace
-from .images import download_image
 from .process import create_manager_process
 from .socket import get_process_socket
 
 
 @contextmanager
-def Container(image_name: str):
-    cm = ContainerManager(image_name)
+def Container(image_name: str, ram_disk_size: int):
+    cm = ContainerManager(image_name, ram_disk_size)
     try:
         yield cm
     finally:
@@ -18,10 +17,9 @@ def Container(image_name: str):
 
 
 class ContainerManager:
-    def __init__(self, image_name) -> None:
+    def __init__(self, image_name, ram_disk_size) -> None:
         self.child_pid = None
-        image_fname = download_image(image_name)
-        pid = create_manager_process(image_fname)
+        pid = create_manager_process(image_name, ram_disk_size)
         self.stop_pid = os.getpid()
         self.pid = pid
         conn = get_process_socket(pid)

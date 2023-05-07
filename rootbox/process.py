@@ -7,7 +7,7 @@ from .socket import create_socket_bind, get_process_socket
 from .verbose import verbose
 
 
-def manager_process(tar_fname) -> None:
+def manager_process(tar_fname: str, ram_disk_size: int) -> None:
     """The manager proccess performs the follwing maint tasks
 
     1. Creates a unix socket and waits to receive a connection and a "setup" message
@@ -24,7 +24,7 @@ def manager_process(tar_fname) -> None:
     if message != "setup":
         raise Exception(f"Unexpected message from parent process: {message}")
     verbose(f"Received message from parent process: {message}")
-    root_mnt = base_setup(tar_fname)
+    root_mnt = base_setup(tar_fname, ram_disk_size)
     conn.sendall(b"ok")
     conn.close()
 
@@ -59,13 +59,13 @@ def setup_master_process(pid: int, verbose=False) -> None:
         exit(2)
 
 
-def create_manager_process(tar_fname: str) -> int:
+def create_manager_process(tar_fname: str, ram_disk_size: int) -> int:
     """Create a master process that will create a new process namespace and
     mount a new root filesystem."""
     pid = os.fork()
 
     if pid == 0:
-        manager_process(tar_fname)
+        manager_process(tar_fname, ram_disk_size)
     else:
         setup_master_process(pid)
         return pid

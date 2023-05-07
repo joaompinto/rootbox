@@ -28,11 +28,6 @@ def bind_standard_mounts(mount_dir):
 
     if os.getuid() != 0:
         raise PermissionError("This function must be run with uid 0")
-    # setup_user_level_root()
-    # current_path = os.getcwd()
-    # restore_path = None
-    # if path_is_parent(os.path.expanduser("~"), current_path):
-    #    restore_path = current_path
 
     for mount_args in STD_MOUNTS:
         tmp_mount_args = list(mount_args)
@@ -50,13 +45,9 @@ def bind_mount_to_host(mount_dir, path):
         target_path.touch()
         mount(path, target_path, None, MS_BIND)
 
-    # if perform_chroot:
-    #     if restore_path:
-    #         target_restore_path = Path(mount_dir, restore_path[1:])
-    #         target_restore_path.mkdir(parents=True)
-    #         mount(restore_path, target_restore_path, None, MS_BIND | MS_REC)
-    #     else:
-    #         target_restore_path = "/"
-    #     os.chroot(mount_dir)
-    #     os.chdir(restore_path or "/")
-    # return mount_dir
+
+def bind_working_dir(mount_dir):
+    working_dir = os.getcwd()
+    target_restore_path = Path(mount_dir, working_dir[1:])
+    target_restore_path.mkdir(parents=True)
+    mount(working_dir, target_restore_path, None, MS_BIND | MS_REC)

@@ -28,7 +28,7 @@ def run(
     if no_shell and command == "/bin/sh":
         raise typer.BadParameter("--no-shell was provided but no command was given")
 
-    mount_dir = base_setup(image_name)
+    mount_dir = base_setup(image_name, ram_disk_size)
 
     if no_net:
         unshare(CLONE_NEWNET)

@@ -8,5 +8,8 @@ write_to = "rootbox/version.py"
 [tool.ruff]
 line-length = 120
 
+[tool.ruff.mccabe]
+max-complexity = 1
+
 [tool.isort]
 profile = "black"

@@ -16,4 +16,4 @@ An extremely simple and fast container engine for Linux and WSL, written in Pyth
 - 🤝 Python 3.11 compatibility
 - 📦 Uses regular remote or local tarball for images, no need for a registry
 - 🐧 [LXC Containers Images](https://images.linuxcontainers.org/) support
-- 📖 [Documentation](docs/README.md)
+- 📖 [Documentation](https://rootbox.pages.dev/)

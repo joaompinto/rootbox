@@ -6,11 +6,6 @@ requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
 [tool.setuptools_scm]
 write_to = "rootbox/version.py"
 
-[tool.ruff]
-line-length = 120
-
-[tool.ruff.mccabe]
-max-complexity = 1
 
 [tool.isort]
 profile = "black"

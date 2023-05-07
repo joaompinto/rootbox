@@ -1,0 +1,12 @@
+# Project information
+site_name: rootbox
+
+
+theme:
+    name: material
+    language: en
+    palette:
+        primary: 'blue'
+        accent: 'green'
+
+copyright:  Copyright © Contributors to the RootBox project

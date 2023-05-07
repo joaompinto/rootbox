@@ -1,0 +1,29 @@
+name: mkdocs
+on: push
+
+# on:
+#   release:
+#     types: [published]
+#   workflow_dispatch:
+
+jobs:
+  mkdocs:
+    runs-on: ubuntu-latest
+    env:
+      CF_API_TOKEN_EXISTS: ${{ secrets.CF_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - name: "Install dependencies"
+        run: |
+          pip install -r docs/requirements.txt
+      - name: "Copy README File"
+        run: |
+          mkdocs build --strict
+      - name: "Deploy to Cloudflare Pages"
+        if: ${{ env.CF_API_TOKEN_EXISTS == 'true' }}
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages publish site --project-name=rootbox --branch ${GITHUB_HEAD_REF} --commit-hash ${GITHUB_SHA}

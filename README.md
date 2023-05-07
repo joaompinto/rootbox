@@ -9,7 +9,7 @@
 
 An extremely simple and fast container engine for Linux and WSL, written in Python.
 
-- 🌎 Installable/usable by any user, not using root privileges
+- 🌎 Installable/usable by any user, does not require root privileges
 - ⚡️ Faster due to the use of in-memory filesystems and minimal set of features
 - 🐍 Simple code base written in Python, simple to understand and extend
 - 🛠️ Development library for embedding container support in other applications

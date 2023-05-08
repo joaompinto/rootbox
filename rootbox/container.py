@@ -1,5 +1,6 @@
 import os
 from contextlib import contextmanager
+from pathlib import Path
 
 from .enter import get_fd_for_process, set_namespace
 from .process import create_manager_process
@@ -7,8 +8,9 @@ from .socket import get_process_socket
 
 
 @contextmanager
-def Container(image_name: str, ram_disk_size: int):
-    cm = ContainerManager(image_name, ram_disk_size)
+def Container(image_name: str, ram_disk_size: int, state_id: str = ""):
+    """Create a container with the given image name and ram disk size."""
+    cm = ContainerManager(image_name, ram_disk_size, state_id)
     try:
         yield cm
     finally:
@@ -16,15 +18,16 @@ def Container(image_name: str, ram_disk_size: int):
 
 
 class ContainerManager:
-    def __init__(self, image_name, ram_disk_size) -> None:
+    def __init__(self, image_name, ram_disk_size, state_id) -> None:
         self.child_pid = None
         pid = create_manager_process(image_name, ram_disk_size)
         self.stop_pid = os.getpid()
-        self.pid = pid
+        self.manager_pid = pid
         conn = get_process_socket(pid)
         conn.sendall(b"info")
         data = conn.recv(1024)
         self.mount_point = data.decode("utf-8")
+        print([x for x in Path(self.mount_point).glob("*")])
         conn.close()
 
     def stop(self):
@@ -37,7 +40,7 @@ class ContainerManager:
             except ConnectionRefusedError:
                 pass
 
-    def run(self, command):
+    def run(self, command: str, store: bool = False):
         conn = get_process_socket(self.pid)
         conn.sendall(b"info")
         data = conn.recv(1024).decode("utf-8")

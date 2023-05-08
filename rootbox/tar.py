@@ -10,12 +10,18 @@ from print_err import print_err
 
 
 def extract_tar(tar_fname, dest_dir):
-    excludes_str = " ".join(
-        [
-            f"--exclude='{e}'"
-            for e in ["./dev", "./sys", "./proc", "./run", "./tmp", "./host_root"]
-        ]
-    )
+    excludes = [
+        "./dev",
+        "./sys",
+        "./proc",
+        "./run",
+        "./tmp",
+        "./host_root",
+        "./etc/resolv.conf",
+        "./etc/passwd",
+        "./etc/group",
+    ]
+    excludes_str = " ".join([f"--exclude='{e}'" for e in excludes])
     cmd = f"tar  -C {dest_dir} -xf {tar_fname} {excludes_str} --no-same-owner"
     rc = os.system(cmd)
     if rc != 0:

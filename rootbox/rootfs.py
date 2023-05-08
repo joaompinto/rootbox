@@ -31,23 +31,21 @@ def bind_standard_mounts(mount_dir):
 
     for mount_args in STD_MOUNTS:
         tmp_mount_args = list(mount_args)
-        tmp_mount_args[1] = f"{mount_dir}/{tmp_mount_args[1]}"
+        target_mount_dir = f"{mount_dir}/{tmp_mount_args[1]}"
+        tmp_mount_args[1] = target_mount_dir
         os.makedirs(tmp_mount_args[1])
         mount(*tmp_mount_args)
 
 
 def bind_mount_to_host(mount_dir, path):
     target_path = Path(f"{mount_dir}{path}")
-
-    if target_path.is_symlink():
-        target_path.unlink()
-    if target_path.parent.exists():
-        target_path.touch()
-        mount(path, target_path, None, MS_BIND)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    target_path.touch()
+    mount(path, target_path, None, MS_BIND | MS_REC)
 
 
 def bind_working_dir(mount_dir):
     working_dir = os.getcwd()
-    target_restore_path = Path(mount_dir, working_dir[1:])
-    target_restore_path.mkdir(parents=True)
-    mount(working_dir, target_restore_path, None, MS_BIND | MS_REC)
+    target_path = Path(mount_dir, working_dir[1:])
+    target_path.mkdir(parents=True, exist_ok=True)
+    mount(working_dir, target_path, None, MS_BIND | MS_REC)

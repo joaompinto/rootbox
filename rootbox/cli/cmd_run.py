@@ -5,10 +5,10 @@ from pathlib import Path
 from typing import Optional
 
 import typer
+from rich import print
 from typing_extensions import Annotated
 
 from ..base import base_setup
-from ..mount_checker import MountChecker
 from ..shell.execute import execute
 from ..unshare import CLONE_NEWNET, unshare
 
@@ -34,15 +34,9 @@ def run(
         unshare(CLONE_NEWNET)
 
     execute(image_name, command, use_shell=not no_shell)
-    MountChecker.read_mounts()
     os.chroot("/host_root")
     if tar_file:
+        print(f"Saving the container to {tar_file}", end="... ", flush=True)
         with tarfile.open(tar_file, "w:gz") as tar:
-            tar.add(
-                mount_dir, arcname="./", filter=filter_out_other_mounts, recursive=True
-            )
-
-
-def filter_out_other_mounts(tarinfo: tarfile.TarInfo):
-    if MountChecker.is_on_mount_dir(tarinfo.name):
-        return tarinfo
+            tar.add(mount_dir, arcname="./", recursive=True)
+        print("Done")

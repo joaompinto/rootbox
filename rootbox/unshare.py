@@ -2,6 +2,7 @@ import ctypes
 import os
 from pathlib import Path
 
+from .mount import MS_PRIVATE, MS_REC, mount
 from .verbose import verbose
 
 CLONE_NEWNS = 0x20000
@@ -41,4 +42,5 @@ def setup_user_level_root():
     uid, gid = os.geteuid(), os.getegid()
     verbose("Creating user and mount namespaces")
     unshare(CLONE_NEWNS | CLONE_NEWUSER)
+    mount(None, "/", None, MS_REC | MS_PRIVATE)
     rewrite_uid_map(uid, gid)

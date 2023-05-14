@@ -39,6 +39,7 @@ def run(
     extract_tar(image_fname, root_mnt)
 
     rootfs.chroot()
+
     if no_net:
         unshare(CLONE_NEWNET)
 

@@ -1,7 +1,6 @@
 # Project information
 site_name: rootbox
 
-
 theme:
     name: material
     language: en

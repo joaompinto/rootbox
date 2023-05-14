@@ -9,7 +9,7 @@ from rich import print
 from typing_extensions import Annotated
 
 from rootbox.images import pull
-from rootbox.tar import extract_tar
+from rootbox.images.tar import extract_tar
 
 from ..rootfs import RootFS
 from ..shell.execute import execute

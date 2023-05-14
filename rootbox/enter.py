@@ -29,6 +29,11 @@ def set_namespace(fd: int) -> None:
         raise OSError(errno, f"setns failed: {os.strerror(errno)}")
 
 
+def set_namespace_pid(pid: int) -> None:
+    fd = get_fd_for_process(pid)
+    return set_namespace(fd)
+
+
 def enter_process(pid: int, no_shell, command) -> None:
     """Enter the process namespace of a given PID."""
 

@@ -1,15 +1,19 @@
 import os
 import sys
+from dataclasses import dataclass
+from multiprocessing import Queue
+from pathlib import Path
 
-from .colorhelper import info, print_error
+from .colorhelper import info
+from .enter import set_namespace_pid
 from .images import pull
+from .images.tar import extract_tar
 from .rootfs import RootFS
-from .socket import create_socket_bind, get_process_socket
-from .tar import extract_tar
+from .socket import create_socket_bind
 from .verbose import verbose
 
 
-def manager_process(image_name: str, ram_disk_size: int) -> None:
+def manager_process(queue: Queue, ram_disk_size: int) -> None:
     """The manager proccess performs the follwing maint tasks
 
     1. Creates a unix socket and waits to receive a connection and a "setup" message
@@ -20,26 +24,15 @@ def manager_process(image_name: str, ram_disk_size: int) -> None:
     """
     sock = create_socket_bind()
     sock.listen(1)
-    conn, _ = sock.accept()
-
-    message = conn.recv(1024).decode("utf-8")
-    if message != "setup":
-        raise Exception(f"Unexpected message from parent process: {message}")
-    verbose(f"Received message from parent process: {message}")
 
     rootfs = RootFS(ram_disk_size)
     root_mnt = rootfs.get_root()
-
-    if ":" in image_name:
-        image_fname = pull(image_name)
-    extract_tar(image_fname, root_mnt)
-
-    conn.sendall(b"ok")
-    conn.close()
+    queue.put(root_mnt.as_posix())
 
     while True:
         conn, _ = sock.accept()
         message = conn.recv(1024).decode("utf-8")
+        verbose("Received message from parent process: ", message)
         if message == "terminate":
             conn.close()
             break
@@ -50,31 +43,47 @@ def manager_process(image_name: str, ram_disk_size: int) -> None:
         conn.close()
 
 
-def setup_master_process(pid: int, verbose=False) -> None:
-    # Connect to the child process's Unix socket
-    conn = get_process_socket(pid)
-    conn.sendall(b"setup")
+def setup_master_process(queue: Queue, pid: int, is_verbose=False) -> None:
+    verbose("Waiting for mount point from the process manager")
+    root_mnt = queue.get()
+    verbose("mount point received", root_mnt)
 
-    # Wait for the setup result
-    message = conn.recv(1024).decode("utf-8")
-    if message == "ok":
-        if verbose:
-            if sys.stdout.isatty():
-                print("Instance setup successfully with PID:", info(pid))
-            else:
-                print(pid)
-    else:
-        print_error(f"Failed to setup the instance: {message}")
-        exit(2)
+    if is_verbose:
+        if sys.stdout.isatty():
+            print("Instance setup successfully with PID:", info(pid))
+        else:
+            print(pid)
+    return root_mnt
 
 
-def create_manager_process(tar_fname: str, ram_disk_size: int) -> int:
-    """Create a master process that will create a new process namespace and
-    mount a new root filesystem."""
-    pid = os.fork()
+@dataclass
+class ProcessManager:
+    ram_disk_size: int
 
-    if pid == 0:
-        manager_process(tar_fname, ram_disk_size)
-    else:
-        setup_master_process(pid)
-        return pid
+    def __post_init__(self):
+        verbose("ProcessManager: Creating process manager")
+        queue = Queue()
+        pid = os.fork()
+        if pid == 0:
+            manager_process(queue, self.ram_disk_size)
+            exit(0)
+        else:
+            root_mnt = setup_master_process(queue, pid)
+            self.root_mnt = root_mnt
+            self.manager_pid = pid
+        verbose("ProcessManager: end of ___post_init__")
+
+    def get_pid(self) -> int:
+        return self.manager_pid
+
+    def get_root(self) -> Path:
+        return Path(self.root_mnt)
+
+    def apply_image(self, image_name) -> None:
+        verbose(f"Applying image {image_name} from {os.getpid()}")
+        set_namespace_pid(self.get_pid())
+        if ":" in image_name:
+            image_fname = pull(image_name)
+        else:
+            image_fname = image_name
+        extract_tar(image_fname, self.root_mnt)

@@ -2,7 +2,7 @@ import os
 import sys
 
 from .colorhelper import info, print_error
-from .images import download_image
+from .images import pull
 from .rootfs import RootFS
 from .socket import create_socket_bind, get_process_socket
 from .tar import extract_tar
@@ -31,7 +31,7 @@ def manager_process(image_name: str, ram_disk_size: int) -> None:
     root_mnt = rootfs.get_root()
 
     if ":" in image_name:
-        image_fname = download_image(image_name)
+        image_fname = pull(image_name)
     extract_tar(image_fname, root_mnt)
 
     conn.sendall(b"ok")

@@ -29,20 +29,26 @@ def validate_image_name(image_name):
 
 
 @dataclass
-class LXCImage:
+class LXCHandler:
     name: str
     version: str
     arch: str = "amd64"
     variant: str = "default"
     build: str = None
 
-    def as_url(self) -> str:
+    def cache_key(self) -> str:
         return url_to_filename(
             f"lxc_{self.name}_{self.version}_{self.arch}_{self.variant}_{self.build or ''}"
         )
 
     def download(self):
         return download_url(get_lcx_distro_url(self))
+
+    def is_local(self):
+        return False
+
+    def is_remote(self):
+        return True
 
 
 class NotSingleVersionError(Exception):
@@ -133,7 +139,7 @@ class LCXMetaData:
         return url
 
 
-def get_lcx_distro_url(lxc_image: LXCImage) -> str:
+def get_lcx_distro_url(lxc_image: LXCHandler) -> str:
     """Get download url from LXC images for a given distro"""
     lcx = LCXMetaData()
     if lxc_image.name not in lcx.distros():

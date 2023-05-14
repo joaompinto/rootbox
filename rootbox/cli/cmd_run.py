@@ -8,7 +8,7 @@ import typer
 from rich import print
 from typing_extensions import Annotated
 
-from rootbox.images import download_image
+from rootbox.images import pull
 from rootbox.tar import extract_tar
 
 from ..rootfs import RootFS
@@ -35,7 +35,7 @@ def run(
     root_mnt = rootfs.get_root()
 
     if ":" in image_name:
-        image_fname = download_image(image_name)
+        image_fname = pull(image_name)
     extract_tar(image_fname, root_mnt)
 
     rootfs.chroot()

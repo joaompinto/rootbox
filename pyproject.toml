@@ -9,3 +9,7 @@ write_to = "rootbox/version.py"
 
 [tool.isort]
 profile = "black"
+
+
+[tool.black]
+max-line-length = 120

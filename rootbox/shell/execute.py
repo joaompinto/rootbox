@@ -18,6 +18,6 @@ def execute(image_name: str, command: str = None, use_shell: bool = True) -> Non
             command = "/bin/sh"
         else:
             raise Exception("No shell found in the container")
-        os.environ["PS1"] = f"\e[0;94m(rbox {image_name} \w)$ \e[m"  # noqa: W605
+        os.environ["PS1"] = rf"\e[0;94m(rbox {image_name} \w)$ \e[m"
         print_system_info()
     subprocess.call(command, shell=use_shell)

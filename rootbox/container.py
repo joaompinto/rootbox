@@ -21,7 +21,7 @@ class ContainerManager:
     def __init__(self, image_name, ram_disk_size, state_id) -> None:
         self.child_pid = None
         pid = create_manager_process(image_name, ram_disk_size)
-        self.stop_pid = os.getpid()
+        self.pid = pid
         self.manager_pid = pid
         conn = get_process_socket(pid)
         conn.sendall(b"info")
@@ -31,14 +31,12 @@ class ContainerManager:
         conn.close()
 
     def stop(self):
-        """only run stop if the process is the same as the one that started the manager"""
-        if os.getpid() == self.stop_pid:
-            try:
-                conn = get_process_socket(self.pid)
-                conn.sendall(b"terminate")
-                conn.close()
-            except ConnectionRefusedError:
-                pass
+        try:
+            conn = get_process_socket(self.pid)
+            conn.sendall(b"terminate")
+            conn.close()
+        except ConnectionRefusedError:
+            pass
 
     def run(self, command: str, store: bool = False):
         conn = get_process_socket(self.pid)

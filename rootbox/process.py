@@ -1,13 +1,15 @@
 import os
 import sys
 
-from .base import base_setup
 from .colorhelper import info, print_error
+from .images import download_image
+from .rootfs import RootFS
 from .socket import create_socket_bind, get_process_socket
+from .tar import extract_tar
 from .verbose import verbose
 
 
-def manager_process(tar_fname: str, ram_disk_size: int) -> None:
+def manager_process(image_name: str, ram_disk_size: int) -> None:
     """The manager proccess performs the follwing maint tasks
 
     1. Creates a unix socket and waits to receive a connection and a "setup" message
@@ -24,7 +26,14 @@ def manager_process(tar_fname: str, ram_disk_size: int) -> None:
     if message != "setup":
         raise Exception(f"Unexpected message from parent process: {message}")
     verbose(f"Received message from parent process: {message}")
-    root_mnt = base_setup(tar_fname, ram_disk_size)
+
+    rootfs = RootFS(ram_disk_size)
+    root_mnt = rootfs.get_root()
+
+    if ":" in image_name:
+        image_fname = download_image(image_name)
+    extract_tar(image_fname, root_mnt)
+
     conn.sendall(b"ok")
     conn.close()
 

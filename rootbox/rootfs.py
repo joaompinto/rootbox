@@ -3,6 +3,8 @@ from pathlib import Path
 from tempfile import mkdtemp
 
 from .mount import MS_BIND, MS_PRIVATE, MS_REC, mount
+from .path import path_is_parent
+from .unshare import setup_user_level_root
 
 STD_MOUNTS = [
     ("/", "host_root/", None, MS_BIND | MS_REC),
@@ -49,3 +51,28 @@ def bind_working_dir(mount_dir):
     target_path = Path(mount_dir, working_dir[1:])
     target_path.mkdir(parents=True, exist_ok=True)
     mount(working_dir, target_path, None, MS_BIND | MS_REC)
+
+
+class RootFS:
+    def __init__(self, ram_disk_size: int) -> None:
+        setup_user_level_root()
+        root_mnt = create_root_tmpfs(ram_disk_size)
+        bind_standard_mounts(root_mnt)
+
+        for bind_path in ["/etc/group", "/etc/resolv.conf", "/etc/passwd"]:
+            bind_mount_to_host(root_mnt, bind_path)
+
+        if path_is_parent(os.path.expanduser("~"), os.getcwd()):
+            bind_working_dir(root_mnt)
+            start_dir = os.getcwd()
+        else:
+            start_dir = "/"
+        self.root_mnt = root_mnt
+        self.start_dir = start_dir
+
+    def chroot(self):
+        os.chroot(self.root_mnt)
+        os.chdir(self.start_dir)
+
+    def get_root(self):
+        return self.root_mnt

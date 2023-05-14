@@ -8,7 +8,10 @@ import typer
 from rich import print
 from typing_extensions import Annotated
 
-from ..base import base_setup
+from rootbox.images import download_image
+from rootbox.tar import extract_tar
+
+from ..rootfs import RootFS
 from ..shell.execute import execute
 from ..unshare import CLONE_NEWNET, unshare
 
@@ -28,8 +31,14 @@ def run(
     if no_shell and command == "/bin/sh":
         raise typer.BadParameter("--no-shell was provided but no command was given")
 
-    mount_dir = base_setup(image_name, ram_disk_size)
+    rootfs = RootFS(ram_disk_size)
+    root_mnt = rootfs.get_root()
 
+    if ":" in image_name:
+        image_fname = download_image(image_name)
+    extract_tar(image_fname, root_mnt)
+
+    rootfs.chroot()
     if no_net:
         unshare(CLONE_NEWNET)
 
@@ -38,5 +47,5 @@ def run(
     if tar_file:
         print(f"Saving the container to {tar_file}", end="... ", flush=True)
         with tarfile.open(tar_file, "w:gz") as tar:
-            tar.add(mount_dir, arcname="./", recursive=True)
+            tar.add(root_mnt, arcname="./", recursive=True)
         print("Done")

@@ -22,6 +22,7 @@ def manager_process(queue: Queue, ram_disk_size: int) -> None:
     4. Keeps in a loop accepting connections and responding to "info" messages with the mount dir
 
     """
+    verbose("Manager process started with pid", os.getpid())
     sock = create_socket_bind()
     sock.listen(1)
 
@@ -71,6 +72,7 @@ class ProcessManager:
             root_mnt = setup_master_process(queue, pid)
             self.root_mnt = root_mnt
             self.manager_pid = pid
+            set_namespace_pid(pid)
         verbose("ProcessManager: end of ___post_init__")
 
     def get_pid(self) -> int:
@@ -81,7 +83,6 @@ class ProcessManager:
 
     def apply_image(self, image_name) -> None:
         verbose(f"Applying image {image_name} from {os.getpid()}")
-        set_namespace_pid(self.get_pid())
         if ":" in image_name:
             image_fname = pull(image_name)
         else:

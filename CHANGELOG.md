@@ -11,4 +11,6 @@ All notable changes to the currrent release will be documented in this file.
 - Support for images from http and https urls
 - Testing for the lib Container object
 
-### Changed
+### Removed
+
+- Support for Python3.8 and Python3.9

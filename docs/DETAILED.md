@@ -26,7 +26,7 @@ Unlike other container tecnhologies (e.g. Docker), Rootbox does not use a multi 
 
 ## What is nedded to run rootbox?
 - A Linux distrubtion or Linux on Windows with WSL (Kernel version >=4.18)
-- Python 3.8, 3.9, 3.10 or 3.11
+- Python 3.10 or 3.11
 - Only 64-bit architectures are supported
 
 ## What applications can I run with rootbox?

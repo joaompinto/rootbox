@@ -1,4 +1,5 @@
 import os
+import sys
 from contextlib import contextmanager
 
 from .process import ProcessManager
@@ -37,14 +38,18 @@ class ContainerManager:
         pid = os.fork()
         if pid:
             pid, exit_code = os.wait()
+            if exit_code:
+                raise RuntimeError(
+                    f"Command {command} failed with exit code {exit_code}"
+                )
             return exit_code
         else:
             os.chroot(self.manager.root_mnt)
             os.chdir("/")
             rc = os.system(f"{command}")
+            resultcode = os.waitstatus_to_exitcode(rc)
             os.chroot("/host_root")
             if rc != 0:
-                raise RuntimeError(f"Command {command} failed with exit code {rc}")
-            # We do not want to raise SystemExit here, because we do not want
-            # to run the atexit handlers in the child.
-            os._exit(rc)
+                print(f"Command {command} failed with exit code {rc}", file=sys.stderr)
+            # Do not want to trigger the parent stop action
+            os._exit(resultcode)

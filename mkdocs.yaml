@@ -1,11 +1,28 @@
 # Project information
-site_name: rootbox
+site_name: Rootbox
+
+repo_url: https://github.com/joaompinto/rootbox
+repo_name: rootbox
 
 theme:
     name: material
     language: en
+    features:
+        - navigation.instant
+        - toc.integrate
+        - toc.follow
     palette:
-        primary: 'blue'
-        accent: 'green'
+        -   media: "(prefers-color-scheme: light)"
+            scheme: default
+            primary: red
+            toggle:
+                icon: material/weather-sunny
+                name: Switch to dark mode
+        -   media: "(prefers-color-scheme: dark)"
+            scheme: slate
+            primary: red
+            toggle:
+                icon: material/weather-night
+                name: Switch to light mode
 
 copyright:  Copyright © Contributors to the RootBox project

@@ -9,5 +9,6 @@ All notable changes to the currrent release will be documented in this file.
 ### Added
 
 - Support for images from http and https urls
+- Testing for the lib Container object
 
 ### Changed
